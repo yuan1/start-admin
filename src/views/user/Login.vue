@@ -1,6 +1,6 @@
 <template>
     <div style="width: 400px;height:100%;margin: 0 auto;display: flex; flex-direction:column;justify-content:center">
-        <h1 style="text-align: center">HUA起飞项目</h1>
+        <h1 style="text-align: center">HUA起飞ADMIN项目</h1>
         <a-form
                 id="components-form-demo-normal-login"
                 :form="form"
@@ -39,17 +39,6 @@
                 </a-input>
             </a-form-item>
             <a-form-item>
-                <a-checkbox
-                        v-decorator="[
-          'rememberMe',
-          {
-            valuePropName: 'checked',
-            initialValue: true,
-          }
-        ]"
-                >
-                    Remember me
-                </a-checkbox>
                 <a
                         class="login-form-forgot"
                         href=""
@@ -57,6 +46,7 @@
                     Forgot password
                 </a>
                 <a-button
+                        :loading="loading"
                         type="primary"
                         html-type="submit"
                         class="login-form-button"
@@ -73,30 +63,42 @@
 
     export default {
         data() {
-            return {}
-        },
-        beforeCreate() {
-            this.form = this.$form.createForm(this);
+            return {
+                loading: false,
+                form: this.$form.createForm(this)
+            }
         },
         methods: {
             handleSubmit(e) {
                 e.preventDefault();
-                this.form.validateFields((err, values) => {
+                const {
+                    form: {validateFields}
+                } = this;
+                validateFields((err, values) => {
                     if (!err) {
-                        this.$api.user.login(values
-                        ).then(res => {
+                        console.log(values);
+                        this.$api.user.login(values).then(res => {
                             // 执行某些操作
-                            if (res.data.id_token) {
-                                this.$store.commit('login',{token:res.data.id_token,rememberMe:values.rememberMe});
-                                // this.$store.dispatch('initAccount');
-                                this.$router.push('/home');
+                            if (res.data && res.data.data) {
+                                let data = res.data.data;
+                                this.saveLoginData(data);
                             }
-                        }).catch(()=>{
-                            this.$message.error('用户名或密码错误');
+                            setTimeout(() => {
+                                this.loading = false
+                            }, 500);
+                            this.$router.push('/')
+                        }).catch(() => {
+                            this.loading = false;
                         })
                     }
                 });
             },
+            saveLoginData(data) {
+                this.$store.commit('setToken', data.token);
+                this.$store.commit('setUser', data.user);
+                this.$store.commit('setPermissions', data.permissions);
+                this.$store.commit('setRoles', data.roles);
+            }
         },
     }
 </script>

@@ -4,36 +4,46 @@ import Vue from 'vue';
 // import api from './api' // 导入api接口
 
 Vue.use(Vuex);
+
+function save(name, data) {
+    localStorage.setItem(name, JSON.stringify(data))
+}
+
+function get(name) {
+    const data = localStorage.getItem(name);
+    return data ? JSON.parse(data) : null;
+}
+
 export default new Vuex.Store({
     state: {
-        token: null,
-        account: null,
+        token: get('USER_TOKEN'),
+        user: get('USER'),
+        permissions: get('PERMISSIONS'),
+        roles: get('ROLES'),
 
     },
     mutations: {
         // 登录成功将, token保存在localStorage中
-        login: (state, data) => {
-            if (data.rememberMe) {
-                localStorage.token = data.token;
-            } else {
-                sessionStorage.token = data.token;
-            }
-            state.token = data.token;
+        setToken: (state, data) => {
+            save('USER_TOKEN', data);
+            state.token = data;
         },
         // 退出登录将, token清空
         logout: (state) => {
-            localStorage.removeItem('token');
-            sessionStorage.removeItem('token');
+            localStorage.clear();
             state.token = null
         },
-        setAccount: (state, data) => {
-            state.account = data;
+        setUser: (state, data) => {
+            save('USER', data);
+            state.user = data;
         },
-        initToken: (state) => {
-            const token = localStorage.getItem('token') || sessionStorage.getItem('token');
-            if (token) {
-                state.token = token;
-            }
+        setPermissions: (state, data) => {
+            save('PERMISSIONS', data);
+            state.permissions = data;
+        },
+        setRoles: (state, data) => {
+            save('ROLES', data);
+            state.roles = data;
         }
 
     },

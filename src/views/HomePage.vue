@@ -230,7 +230,7 @@
         name: 'home',
         created() {
             this.$notification.open({
-                message: '欢迎' + this.$store.state.account.firstName,
+                message: '欢迎' + this.$store.state.user.username,
             });
         },
         methods: {}

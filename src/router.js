@@ -1,16 +1,35 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import HomePageView from '@/views/HomePage'
-import MenuView from "@/views/common/MenuView";
 import Login from "@/views/user/Login";
+import BasicLayout from "@/components/BasicLayout";
+import SessionLayout from "@/components/SessionLayout";
+import Register from "@/views/user/Register";
+import api from "@/api";
 
 Vue.use(Router);
 
 let constRouter = [
     {
-        path: '/session/login',
-        name: '登录页',
-        component: Login
+        path: '/session',
+        component: SessionLayout,
+        redirect: '/session/login',
+        children: [
+            {
+                // 当 /session/login 匹配成功，
+                // Login 会被渲染在 SessionLayout 的 <router-view> 中
+                path: 'login',
+                name: 'login',
+                component: Login
+            },
+            {
+                // 当 /session/register 匹配成功，
+                // Register 会被渲染在 SessionLayout 的 <router-view> 中
+                path: 'register',
+                name: 'register',
+                component: Register
+            },
+        ]
     },
     {
         path: '/index',
@@ -31,14 +50,14 @@ router.beforeEach((to, from, next) => {
     if (whiteList.indexOf(to.path) !== -1) { //返回某个指定的字符串值在字符串中首次出现的位置
         next()
     }
-    let token = localStorage.getItem('USER_TOKEN');
-    let user = localStorage.getItem('USER');
+    let token = get('USER_TOKEN');
+    let user = get('USER');
     let userRouter = get('USER_ROUTER');
-    if (token.length && user) {
+    if (token && user) {
         if (!asyncRouter) {
             if (!userRouter) {
                 //根据username 获取菜单权限
-                this.$api.user.menuData().then((res) => {
+                api.user.menuData(user.username).then((res) => {
                     asyncRouter = res.data;
                     save('USER_ROUTER', asyncRouter);
                     go(to, next)
@@ -66,7 +85,7 @@ function save(name, data) {
 }
 
 function get(name) {
-    return JSON.parse(localStorage.getItem(name))
+    return JSON.parse(localStorage.getItem(name)) || null
 }
 
 
@@ -76,7 +95,7 @@ function filterAsyncRouter(routes) {
         if (component) {
             switch (route.component) {
                 case 'MenuView':
-                    route.component = MenuView;
+                    route.component = BasicLayout;
                     break;
                 case 'HomePageView':
                     route.component = HomePageView;
