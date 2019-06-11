@@ -32,7 +32,7 @@ const errorHandle = (status, other) => {
         default:
             notification.error({
                 message: '系统提示',
-                description: other ? other : '系统内部异常，请联系网站管理员',
+                description: other || '系统内部异常，请联系网站管理员',
                 duration: 4
             });
             break
