@@ -4,6 +4,7 @@ import HomePageView from '@/views/HomePage'
 import Login from "@/views/user/Login";
 import BasicLayout from "@/components/BasicLayout";
 import SessionLayout from "@/components/SessionLayout";
+import PageView from "@/components/PageView";
 import Register from "@/views/user/Register";
 import api from "@/api";
 
@@ -96,6 +97,9 @@ function filterAsyncRouter(routes) {
             switch (route.component) {
                 case 'MenuView':
                     route.component = BasicLayout;
+                    break;
+                case 'PageView':
+                    route.component = PageView;
                     break;
                 case 'HomePageView':
                     route.component = HomePageView;

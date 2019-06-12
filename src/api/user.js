@@ -1,7 +1,7 @@
 /**
  * user模块接口列表
  * @author lyh
- * @date 2019-05-09
+ * @date 2019-06-11
  */
 
 import base from './base'; // 导入接口域名列表

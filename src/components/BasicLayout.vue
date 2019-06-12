@@ -16,7 +16,7 @@
                 <template v-for="(menu,index) in menuData">
                     <a-sub-menu v-if="menu.children && menu.children.length>0" :key="'sub_'+index+'_'+menu.icon">
                         <span slot="title"><a-icon :type="menu.icon"/><span>{{menu.name}}</span></span>
-                        <a-menu-item v-for="(child,cindex) in menu.children" :key="'sub_child_'+cindex+'_'+child.icon">
+                        <a-menu-item v-for="(child,cindex) in menu.children" :key="'sub_child_'+index+cindex+'_'+child.icon">
                             <router-link :to="child.path">{{child.name}}</router-link>
                         </a-menu-item>
                     </a-sub-menu>
