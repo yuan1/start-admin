@@ -102,12 +102,7 @@
         methods: {
             exitLayout() {
                 this.$store.commit('logout');
-                router.replace({
-                    path: '/session/login',
-                    query: {
-                        redirect: router.currentRoute.fullPath
-                    }
-                });
+                location.reload()
             },
             changePwd() {
                 this.$router.push('/info');

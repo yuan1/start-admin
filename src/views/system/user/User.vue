@@ -3,6 +3,7 @@
              :dataSource="data"
              :pagination="pagination"
              :loading="loading"
+             rowKey="userId" 
              :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}"
              @change="handleTableChange"
     >
@@ -81,10 +82,9 @@
                 pagination: {
                     pageSizeOptions: ['10', '20', '30', '40', '100'],
                     defaultCurrent: 1,
+                    total:0,
                     defaultPageSize: 10,
-                    showQuickJumper: true, //是否可以快速跳转至某页
                     showSizeChanger: true, //是否可以改变 pageSize
-                    showTotal: (total, range) => `显示 ${range[0]} ~ ${range[1]} 条记录，共 ${total} 条记录` //用于显示数据总量和当前数据顺序
                 },
             }
         },
@@ -93,15 +93,34 @@
         },
         methods:{
             handleTableChange(pagination, filters, sorter){
+                console.log(pagination);
+                console.log(filters);  
+                console.log(sorter);
+                this.$api.userManager.getUser({
+                    pageNum:pagination.current,
+                    pageSize:pagination.pageSize,
+                    sortField:sorter.field,
+                    sortOrder:sorter.order,
+                    ssex:filters.ssex?filters.ssex[0]:null,
+                    status:filters.status?filters.status[0]:null,
+            }).then(res => {
+                    this.data = res.data.rows;
+                    this.pagination.total = res.data.total
+                })
 
+                
             },
             onSelectChange (selectedRowKeys) {
                 console.log('selectedRowKeys changed: ', selectedRowKeys);
                 this.selectedRowKeys = selectedRowKeys
             },
             userData () {
-                this.$api.userManager.getUser().then(res => {
+                this.$api.userManager.getUser({
+                    pageNum:this.pagination.defaultCurrent,
+                    pageSize:this.pagination.defaultPageSize,
+            }).then(res => {
                     this.data = res.data.rows;
+                    this.pagination.total = res.data.total
                     console.error('res.data',res.data)
                 })
             },
