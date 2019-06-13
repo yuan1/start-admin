@@ -137,7 +137,7 @@
                 console.log(pagination);
                 console.log(filters);
                 console.log(sorter);
-                this.$api.userManager.getUser({
+                this.$api.userManager.getRole({
                     pageNum: pagination.current,
                     pageSize: pagination.pageSize,
                     sortField: sorter.field,
@@ -156,7 +156,6 @@
                 }).then(res => {
                     this.data = res.data.rows;
                     this.pagination.total = res.data.total;
-                    // console.error('res.data', res.data)
                 })
             },
             handleOk() {

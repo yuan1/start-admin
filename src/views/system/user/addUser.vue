@@ -8,12 +8,12 @@
             @ok="handleOk"
             :confirmLoading="confirmLoading"
             @cancel="handleCancel"
-           >
+    >
         <a-form :form="form">
             <a-form-item label='用户名'
                          v-bind="formItemLayout">
                 <a-input
-                         v-decorator="['username',{rules: [{ required: true, message: '用户名不能为空'}]}]"/>
+                        v-decorator="['username',{rules: [{ required: true, message: '用户名不能为空'}]}]"/>
             </a-form-item>
             <a-form-item label='密码' v-bind="formItemLayout">
                 <a-input
@@ -31,16 +31,17 @@
             </a-form-item>
             <a-form-item label="手机" v-bind="formItemLayout">
                 <a-input
-                         v-decorator="['mobile', {rules: [
+                        v-decorator="['mobile', {rules: [
             { required: true, message: '请输入正确的手机号'}
           ]}]"/>
             </a-form-item>
-            <a-form-item label='角色' v-bind="formItemLayout" >
+            <a-form-item label='角色' v-bind="formItemLayout">
                 <a-select
                         mode="multiple"
                         style="width: 100%"
                         v-decorator="['Role.vue',{rules: [{ required: true, message: '请选择角色' }]}]">
-<!--                    <a-select-option v-for="(x,index) in roleData" :key="index" :value="x.id">{{x.roleName}}</a-select-option>-->
+                    <a-select-option v-for="(x,index) in roleData" :key="index" :value="x.id">{{x.roleName}}
+                    </a-select-option>
                 </a-select>
             </a-form-item>
             <a-form-item label='部门' v-bind="formItemLayout">
@@ -77,7 +78,7 @@
                 confirmLoading: false,
                 id: undefined,
                 form: this.$form.createForm(this),
-                roleData:[],
+                roleData: [],
                 formItemLayout: {
                     labelCol: {span: 3},
                     wrapperCol: {span: 18}
@@ -89,7 +90,9 @@
                 },
             }
         },
-
+        created() {
+            this.getRole();
+        },
         methods: {
             ok() {
                 this.confirmLoading = false;
@@ -101,33 +104,42 @@
                     if (!err) {
                         console.error('Received values of form: ', values);
                         this.confirmLoading = true;
-                            this.$api.userManager.createUser({
-                                username: values.username, password: values.password, email: values.email,
-                                mobile: values.mobile, role: values.Role, deptId: values.deptId,
-                                status: values.status, ssex: values.ssex,
-                            }).then(() => {
-                                this.ok();
-                                this.$message.success('创建成功');
-                            }).catch(() => {
-                                this.confirmLoading = false;
-                            });
+                        this.$api.userManager.createUser({
+                            username: values.username, password: values.password, email: values.email,
+                            mobile: values.mobile, role: values.roleId, deptId: values.deptId,
+                            status: values.status, ssex: values.ssex,
+                        }).then(() => {
+                            this.ok();
+                            this.$message.success('创建成功');
+                        }).catch(() => {
+                            this.confirmLoading = false;
+                        });
                     }
                 });
             },
             handleCancel() {
                 this.visible = false
             },
-            // userRole () {
-            //     this.$api.userManager.getRole().then(res => {
-            //         this.roleData = res.data.rows;
-            //         // console.error('11111111111',res.data.rows)
-            //     })
-            // },
+            getRole() {
+                this.$api.userManager.getRole().then(res => {
+                    this.roleData = res.data.rows;
+                    // console.error('11111111111',res.data.rows)
+                })
+            },
             add() {
                 this.visible = true;
-                const {form:{setFieldsValue}} = this;
-                this.$nextTick(() =>{
-                    setFieldsValue({ username: '', password: '', email: '', mobile: '', role: '', deptId: '', status: '', ssex: ''})
+                const {form: {setFieldsValue}} = this;
+                this.$nextTick(() => {
+                    setFieldsValue({
+                        username: '',
+                        password: '',
+                        email: '',
+                        mobile: '',
+                        role: '',
+                        deptId: '',
+                        status: '',
+                        ssex: ''
+                    })
                 });
             },
         }

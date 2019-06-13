@@ -107,7 +107,7 @@
 </template>
 
 <script>
-    import AddUser from "@/views/system/user/AddUser";
+    import AddUser from "@/views/system/user/addUser";
     const columns = [{
         title: '用户名',
         sorter: true,
@@ -221,7 +221,7 @@
                 }).then(res => {
                     this.data = res.data.rows;
                     this.pagination.total = res.data.total;
-                    // console.error('res.data', res.data)
+                    console.error('res.data', res.data)
                 })
             },
             search(){

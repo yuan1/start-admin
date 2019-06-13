@@ -8,7 +8,7 @@ import base from './base'; // 导入接口域名列表
 import axios from '@/utils/http'; // 导入http中创建的axios实例
 
 const userManager = {
-    // 国家  (定义调用接口的方法，根据需求传参，并返回数据)
+    // 系统管理 (定义调用接口的方法，根据需求传参，并返回数据)
     getUser (params) {
         return axios.get(`${base.api}/user`,{params:params})
     },
