@@ -39,13 +39,13 @@
                 <a-select
                         mode="multiple"
                         style="width: 100%"
-                        v-decorator="['Role.vue',{rules: [{ required: true, message: '请选择角色' }]}]">
-                    <a-select-option v-for="(x,index) in roleData" :key="index" :value="x.id">{{x.roleName}}
+                        v-decorator="['roleId',{rules: [{ required: true, message: '请选择角色' }]}]">
+                    <a-select-option v-for="(x,index) in roleData" :key="index" :value="x.roleId">{{x.roleName}}
                     </a-select-option>
                 </a-select>
             </a-form-item>
             <a-form-item label='部门' v-bind="formItemLayout">
-                <a-tree-select
+                <a-tree-select>
                         :dropdownStyle="{ maxHeight: '220px', overflow: 'auto' }"
                         v-decorator="['deptId']">
                 </a-tree-select>
@@ -82,12 +82,7 @@
                 formItemLayout: {
                     labelCol: {span: 3},
                     wrapperCol: {span: 18}
-                },
-                validateStatus: '',
-                help: '',
-                user: {
-                    username: ''
-                },
+                }
             }
         },
         created() {
@@ -106,7 +101,7 @@
                         this.confirmLoading = true;
                         this.$api.userManager.createUser({
                             username: values.username, password: values.password, email: values.email,
-                            mobile: values.mobile, role: values.roleId, deptId: values.deptId,
+                            mobile: values.mobile, roleId: values.roleId, deptId: values.deptId,
                             status: values.status, ssex: values.ssex,
                         }).then(() => {
                             this.ok();
@@ -131,14 +126,14 @@
                 const {form: {setFieldsValue}} = this;
                 this.$nextTick(() => {
                     setFieldsValue({
-                        username: '',
-                        password: '',
-                        email: '',
-                        mobile: '',
-                        role: '',
-                        deptId: '',
-                        status: '',
-                        ssex: ''
+                        username:null,
+                        password:null,
+                        email: null,
+                        mobile:null,
+                        roleId: undefined,
+                        deptId: null,
+                        status: null,
+                        ssex: null
                     })
                 });
             },
