@@ -12,6 +12,15 @@ const userManager = {
     getUser (params) {
         return axios.get(`${base.api}/user`,{params:params})
     },
+    // checkUser (username) {
+    //     return axios.get(`${base.api}/user/check/${username}`,)
+    // },
+    createUser(data) {
+        return axios.post(`${base.api}/user`, data)
+    },
+    getRole (params) {
+        return axios.get(`${base.api}/role`,{params:params})
+    },
 
 };
 
