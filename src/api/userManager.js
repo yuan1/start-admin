@@ -18,8 +18,17 @@ const userManager = {
     createUser(data) {
         return axios.post(`${base.api}/user`, data)
     },
-    getRole (params) {
-        return axios.get(`${base.api}/role`,{params:params})
+    updateUser(data) {
+        return axios.put(`${base.api}/user`, data)
+    },
+    deleteUser(userIds) {
+        return axios.delete(`${base.api}/user/${userIds.join(',')}`)
+    },
+    getRole () {
+        return axios.get(`${base.api}/role`)
+    },
+    getDept () {
+        return axios.get(`${base.api}/dept`)
     },
 
 };

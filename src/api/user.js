@@ -10,14 +10,7 @@ import axios from '@/utils/http'; // 导入http中创建的axios实例
 const user = {
     // 用户登录  (定义调用接口的方法，根据需求传参，并返回数据)
     login(data) {
-        let fd = new FormData();
-        fd.append('username', data.username);
-        fd.append('password', data.password);
-        return axios.post(`${base.api}/login`, fd, {
-            headers: {
-                'Content-Type': 'multipart/form-data'
-            }
-        })
+        return axios.post(`${base.api}/login`,data)
     },
     menuData(username) {
         return axios.get(`${base.api}/menu/${username}`)

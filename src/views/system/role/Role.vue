@@ -40,7 +40,7 @@
         </div>
         <div>
             <div style="margin-bottom: 18px;">
-                <a-button type="primary" ghost>新增</a-button>
+                <a-button type="primary" ghost @click="addClick">新增</a-button>
                 <a-button style="margin-left: 8px"> 删除</a-button>
                 <a-dropdown>
                     <a-menu slot="overlay">
@@ -73,11 +73,13 @@
                 </template>
             </a-table>
         </div>
+        <RoleEdit ref="modal" @ok="handleOk"/>
 
     </a-card>
 </template>
 
 <script>
+    import RoleEdit from "@/views/system/role/RoleEdit";
     const columns = [
         {
             title: '角色',
@@ -104,6 +106,7 @@
 
     export default {
         name: "role",
+        components: {RoleEdit},
         data() {
             return {
                 columns,
@@ -126,6 +129,18 @@
             this.roleData();
         },
         methods: {
+            roleData() {
+                this.$api.userManager.getRole({
+                    pageNum: this.pagination.defaultCurrent,
+                    pageSize: this.pagination.defaultPageSize,
+                }).then(res => {
+                    this.data = res.data.rows;
+                    this.pagination.total = res.data.total;
+                })
+            },
+            addClick() {
+                this.$refs.modal.add();
+            },
             onSelectChange(selectedRowKeys) {
                 console.log('selectedRowKeys changed: ', selectedRowKeys);
                 this.selectedRowKeys = selectedRowKeys
@@ -148,15 +163,6 @@
                 })
 
 
-            },
-            roleData() {
-                this.$api.userManager.getRole({
-                    pageNum: this.pagination.defaultCurrent,
-                    pageSize: this.pagination.defaultPageSize,
-                }).then(res => {
-                    this.data = res.data.rows;
-                    this.pagination.total = res.data.total;
-                })
             },
             handleOk() {
                 this.roleData();

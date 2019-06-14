@@ -63,7 +63,7 @@
         </div>
         <div>
             <div style="margin-bottom: 18px;">
-                <a-button type="primary" ghost  @click="addClick">新增</a-button>
+                <a-button type="primary" ghost @click="addClick">新增</a-button>
                 <a-button style="margin-left: 8px" @click="deleteClick"> 删除</a-button>
                 <a-dropdown>
                     <a-menu slot="overlay">
@@ -95,19 +95,19 @@
                     <a-tag v-else color="red">锁定</a-tag>
                 </template>
                 <template slot="operation">
-                    <a-icon type="setting" theme="twoTone" twoToneColor="#4a9ff5" title="修改用户"></a-icon>
+                    <a-icon type="setting" theme="twoTone" twoToneColor="#4a9ff5" title="修改用户"
+                            @click="updateClick"></a-icon>
                     <a-icon type="eye" theme="twoTone" twoToneColor="#42b983" title="查看"></a-icon>
                 </template>
             </a-table>
         </div>
-
-        <AddUser ref="modal" @ok="handleOk"></AddUser>
+       <UserEdit ref="modal" @ok="handleOk"/>
     </a-card>
 
 </template>
 
 <script>
-    import AddUser from "@/views/system/user/addUser";
+    import UserEdit from "@/views/system/user/UserEdit";
     const columns = [{
         title: '用户名',
         sorter: true,
@@ -165,7 +165,7 @@
 
     export default {
         name: "User",
-        components: {AddUser},
+        components: {UserEdit},
         data() {
             return {
                 data: [],
@@ -184,7 +184,7 @@
                 },
 
                 rangeConfig: {
-                    rules: [{ type: 'array', required: true, message: 'Please select time!' }],
+                    rules: [{type: 'array', required: true, message: 'Please select time!'}],
                 },
             }
         },
@@ -224,10 +224,10 @@
                     console.error('res.data', res.data)
                 })
             },
-            search(){
+            search() {
 
             },
-            handleSelectChange(){
+            handleSelectChange() {
 
             },
             toggleAdvanced() {
@@ -236,7 +236,34 @@
             addClick() {
                 this.$refs.modal.add();
             },
-            deleteClick(){
+            updateClick(data) {
+                this.$refs.modal.update(data);
+            },
+            deleteClick(key) {
+                if (!this.selectedRowKeys.length) {
+                    this.$message.warning('请选择需要删除的记录');
+                    return;
+                }
+                let that = this;
+                this.$confirm({
+                    title: '确定删除所选中的记录?',
+                    content: '当您点击确定按钮后，这些记录将会被彻底删除',
+                    centered: true,
+                    onOk() {
+                        let userIds = [];
+                        for (let key of that.selectedRowKeys) {
+                            userIds.push(that.dataSource[key].userIds)
+                        }
+                        that.$api.userManager.deleteUser(key).then(() => {
+                            that.$message.success('删除成功');
+                            that.selectedRowKeys = [];
+                            that.userData();
+                        })
+                    },
+                    onCancel() {
+                        that.selectedRowKeys = []
+                    }
+                })
 
             },
             handleOk() {

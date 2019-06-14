@@ -1,6 +1,6 @@
 <template>
     <a-modal
-            title="新增用户"
+            :title="!userId?'新增用户':'修改用户'"
             :visible="visible"
             :centered="true"
             :keyboard="false"
@@ -45,8 +45,9 @@
                 </a-select>
             </a-form-item>
             <a-form-item label='部门' v-bind="formItemLayout">
-                <a-tree-select>
+                <a-tree-select
                         :dropdownStyle="{ maxHeight: '220px', overflow: 'auto' }"
+                        :treeData="deptData"
                         v-decorator="['deptId']">
                 </a-tree-select>
             </a-form-item>
@@ -71,14 +72,15 @@
 
 <script>
     export default {
-        name: "AddUser",
+        name: "UserEdit",
         data() {
             return {
                 visible: false,
                 confirmLoading: false,
-                id: undefined,
+                userId: undefined,
                 form: this.$form.createForm(this),
                 roleData: [],
+                deptData: [],
                 formItemLayout: {
                     labelCol: {span: 3},
                     wrapperCol: {span: 18}
@@ -87,6 +89,7 @@
         },
         created() {
             this.getRole();
+            this.getDept();
         },
         methods: {
             ok() {
@@ -99,16 +102,29 @@
                     if (!err) {
                         console.error('Received values of form: ', values);
                         this.confirmLoading = true;
-                        this.$api.userManager.createUser({
-                            username: values.username, password: values.password, email: values.email,
-                            mobile: values.mobile, roleId: values.roleId, deptId: values.deptId,
-                            status: values.status, ssex: values.ssex,
-                        }).then(() => {
-                            this.ok();
-                            this.$message.success('创建成功');
-                        }).catch(() => {
-                            this.confirmLoading = false;
-                        });
+                        if (!this.userId) {
+                            this.$api.userManager.createUser({
+                                username: values.username, password: values.password, email: values.email,
+                                mobile: values.mobile, roleId: values.roleId.join(','), deptId: values.deptId,
+                                status: values.status, ssex: values.ssex,
+                            }).then(() => {
+                                this.ok();
+                                this.$message.success('增加成功');
+                            }).catch(() => {
+                                this.confirmLoading = false;
+                            });
+                        } else {
+                            this.$api.userManager.updateUser({
+                                username: values.username, password: values.password, email: values.email,
+                                mobile: values.mobile, roleId: values.roleId.join(','), deptId: values.deptId,
+                                status: values.status, ssex: values.ssex, userId: this.userId
+                            }).then(() => {
+                                this.ok();
+                                this.$message.success('创建成功');
+                            }).catch(() => {
+                                this.confirmLoading = false;
+                            });
+                        }
                     }
                 });
             },
@@ -118,7 +134,13 @@
             getRole() {
                 this.$api.userManager.getRole().then(res => {
                     this.roleData = res.data.rows;
-                    // console.error('11111111111',res.data.rows)
+                    console.error('res', res.data.rows)
+                })
+            },
+            getDept() {
+                this.$api.userManager.getDept().then(res => {
+                    this.deptData = res.data.rows.children;
+                    console.error('res.data', res.data.rows.children)
                 })
             },
             add() {
@@ -126,14 +148,17 @@
                 const {form: {setFieldsValue}} = this;
                 this.$nextTick(() => {
                     setFieldsValue({
-                        username:null,
-                        password:null,
-                        email: null,
-                        mobile:null,
-                        roleId: undefined,
-                        deptId: null,
-                        status: null,
-                        ssex: null
+                        username: '', password: '', email: '', mobile: '', roleId: undefined, deptId: '', status: '', ssex: ''})
+                });
+            },
+            update(data) {
+                this.visible = true;
+                this.userId = data.userId;
+                const {form: {setFieldsValue}} = this;
+                this.$nextTick(() => {
+                    setFieldsValue({
+                        username: data.username, password: data.password, email: data.email, mobile: data.mobile,
+                        roleId: data.roleId.join(','), deptId: data.deptId, status: data.status, ssex: data.ssex
                     })
                 });
             },

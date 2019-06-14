@@ -3,7 +3,7 @@ module.exports = {
     devServer: {
     proxy: {
         '/api': {
-            target: 'http://liuyonghua.cn:9527/',
+            target: 'http://admin.liuyonghua.cn:9527/',
                 ws: true,
                 changeOrigin: true
         }
