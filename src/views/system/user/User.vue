@@ -94,9 +94,9 @@
                     <a-tag v-if="text==='1'" color="cyan">有效</a-tag>
                     <a-tag v-else color="red">锁定</a-tag>
                 </template>
-                <template slot="operation">
+                <template slot="operation"  slot-scope="text, record">
                     <a-icon type="setting" theme="twoTone" twoToneColor="#4a9ff5" title="修改用户"
-                            @click="updateClick"></a-icon>
+                            @click="updateClick(record)"></a-icon>
                     <a-icon type="eye" theme="twoTone" twoToneColor="#42b983" title="查看"></a-icon>
                 </template>
             </a-table>

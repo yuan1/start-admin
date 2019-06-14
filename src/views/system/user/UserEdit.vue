@@ -40,7 +40,7 @@
                         mode="multiple"
                         style="width: 100%"
                         v-decorator="['roleId',{rules: [{ required: true, message: '请选择角色' }]}]">
-                    <a-select-option v-for="(x,index) in roleData" :key="index" :value="x.roleId">{{x.roleName}}
+                    <a-select-option v-for="(x,index) in roleData" :key="index" :value="`${x.roleId}`">{{x.roleName}}
                     </a-select-option>
                 </a-select>
             </a-form-item>
@@ -152,13 +152,14 @@
                 });
             },
             update(data) {
+                console.log(data);
                 this.visible = true;
                 this.userId = data.userId;
                 const {form: {setFieldsValue}} = this;
                 this.$nextTick(() => {
                     setFieldsValue({
                         username: data.username, password: data.password, email: data.email, mobile: data.mobile,
-                        roleId: data.roleId.join(','), deptId: data.deptId, status: data.status, ssex: data.ssex
+                        roleId: data.roleId.toString().split(','), deptId: data.deptId, status: data.status, ssex: data.ssex
                     })
                 });
             },
