@@ -158,8 +158,7 @@
                 this.roleId = data.roleId;
                 const {form: {setFieldsValue}} = this;
                 this.$nextTick(() => {
-                    setFieldsValue({
-                        roleName: data.roleName, remark: data.remark,menuId: data.menuId? data.menuId.toString().split(","):''})
+                    setFieldsValue({roleName: data.roleName, remark: data.remark,menuId: data.menuId})
                 });
             },
             //点击复选框触发

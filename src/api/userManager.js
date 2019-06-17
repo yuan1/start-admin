@@ -47,6 +47,9 @@ const userManager = {
     getMenu(params) {
         return axios.get(`${base.api}/menu`,{ params: params })
     },
+    deleteMenu(menuIds) {
+        return axios.delete(`${base.api}/menu/${menuIds.join(',')}`)
+    }
 
 };
 

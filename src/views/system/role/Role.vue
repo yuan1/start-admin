@@ -94,6 +94,7 @@
                 },
 
                 sorter: {},
+                filters: {},
                 searchParams: {},
 
             }
