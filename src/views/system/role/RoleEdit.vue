@@ -32,6 +32,8 @@
                         ref="menuTree"
                         :checkable="true"
                         :checkStrictly="checkStrictly"
+                        @check="handleCheck"
+                        @expand="handleExpand"
                         :expandedKeys="expandedKeys"
                         :treeData="menuData">
                 </a-tree>
@@ -60,8 +62,10 @@
         data(){
             return{
                 visible: false,
+                loading :false,
                 confirmLoading: false,
                 roleId: undefined,
+                menuId: '',
                 form: this.$form.createForm(this),
                 formItemLayout: {
                     labelCol: {span: 3},
@@ -74,6 +78,9 @@
                 checkedKeys: [],
                 defaultCheckedKeys: [],
                 expandedKeys: [], //（受控）展开指定的树节点
+
+                menuSelectStatus: '',
+                menuSelectHelp: '',
 
 
             }
@@ -95,15 +102,18 @@
                 this.$emit("ok");
             },
             handleOk() {
+                let checkedArr = Object.is(this.checkedKeys.checked, undefined) ? this.checkedKeys : this.checkedKeys.checked;
                 this.form.validateFields((err, values) => {
                     if (!err) {
-                        console.error("Received values of form: ", values);
+                        console.log("Received values of form: ", values);
                         this.confirmLoading = true;
+                        this.menuId = checkedArr.join(',');
                         if (!this.roleId) {
                             this.$api.userManager
                                 .createRole({
                                     roleName: values.roleName,
                                     remark: values.remark,
+                                    menuId: this.menuId,
                                 })
                                 .then(() => {
                                     this.ok();
@@ -118,6 +128,7 @@
                                     roleName: values.roleName,
                                     remark: values.remark,
                                     roleId: this.roleId,
+                                    menuId: this.menuId,
                                 })
                                 .then(() => {
                                     this.ok();
@@ -126,6 +137,7 @@
                                 .catch(() => {
                                     this.confirmLoading = false;
                                 });
+
                         }
                     }
                 });
@@ -137,8 +149,9 @@
                 this.visible = true;
                 const {form: {setFieldsValue}} = this;
                 this.$nextTick(() => {
-                    setFieldsValue({roleName: '', remark: '',})
+                    setFieldsValue({roleName: '', remark: '',menuId:''})
                 });
+                this.reset();
             },
             update(data) {
                 this.visible = true;
@@ -146,7 +159,7 @@
                 const {form: {setFieldsValue}} = this;
                 this.$nextTick(() => {
                     setFieldsValue({
-                        roleName: data.roleName, remark: data.remark})
+                        roleName: data.roleName, remark: data.remark,menuId: data.menuId? data.menuId.toString().split(","):''})
                 });
             },
             //点击复选框触发
@@ -164,7 +177,13 @@
             },
             //展开/收起节点时触发
             handleExpand(expandedKeys){
-                this.expandedKeys = expandedKeys
+                this.expandedKeys = expandedKeys;
+            },
+            reset() {
+                this.menuTreeKey = +new Date();
+                this.expandedKeys = this.checkedKeys = [];
+                this.loading = false;
+                this.form.resetFields();
             },
 
         }

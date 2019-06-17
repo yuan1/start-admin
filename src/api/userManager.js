@@ -23,8 +23,8 @@ const userManager = {
         return axios.delete(`${base.api}/user/${userIds.join(',')}`)
     },
     /* 角色 */
-    getRole() {
-        return axios.get(`${base.api}/role`)
+    getRole(params) {
+        return axios.get(`${base.api}/role`,{ params: params })
     },
     createRole(data){
         return axios.post(`${base.api}/role`, data)
@@ -44,8 +44,8 @@ const userManager = {
         return axios.get(`${base.api}/dept`)
     },
     /* 菜单 */
-    getMenu() {
-        return axios.get(`${base.api}/menu`)
+    getMenu(params) {
+        return axios.get(`${base.api}/menu`,{ params: params })
     },
 
 };

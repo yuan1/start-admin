@@ -151,7 +151,7 @@
                 this.$api.userManager.getRole({
                     createTimeFrom: searchParams.createTimeFrom,
                     createTimeTo: searchParams.createTimeTo,
-                    roleId: searchParams.roleId,
+                    roleName: searchParams.roleName,
 
                     pageNum: pagination.current,
                     pageSize: pagination.pageSize,
