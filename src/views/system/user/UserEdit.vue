@@ -32,7 +32,7 @@
       <a-form-item label="手机" v-bind="formItemLayout">
         <a-input
           v-decorator="['mobile', {rules: [
-            { pattern: '^0?(13[0-9]|15[012356789]|17[013678]|18[0-9]|14[57])[0-9]{8}$', message: '请输入正确的手机号'}
+            { pattern: '^0?(13[0-9]|15[012356789]|17[013678]|18[0-9]|14[57])[0-9]{8}$',required: true, message: '请输入正确的手机号'}
           ]}]"
         />
       </a-form-item>

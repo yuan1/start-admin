@@ -9,12 +9,7 @@
                                     label="角色"
                                     :labelCol="{span: 5}"
                                     :wrapperCol="{span: 18, offset: 1}">
-                                <a-input
-                                        v-decorator="[
-          'roleName',
-          {rules: [{ required: true, message: 'Please input your roleName!' }]}
-        ]"
-                                />
+                                <a-input  v-model="searchParams.roleName"/>
                             </a-form-item>
                         </a-col>
                         <template>
@@ -23,16 +18,15 @@
                                         label="创建时间"
                                         :labelCol="{span: 5}"
                                         :wrapperCol="{span: 18, offset: 1}">
-                                    <a-range-picker v-decorator="['range-picker', rangeConfig]"/>
+                                    <a-range-picker v-model="searchParams.createTime"/>
 
                                 </a-form-item>
                             </a-col>
                         </template>
                     </div>
                     <span style="float: right; margin-top: 3px;">
-                    <a-button type="primary">查询</a-button>
-                    <a-button style="margin-left: 8px"> 重置</a-button>
-
+                    <a-button type="primary" @click="search">查询</a-button>
+            <a-button style="margin-left: 8px" @click="reset">重置</a-button>
           </span>
 
                 </a-row>
@@ -41,7 +35,7 @@
         <div>
             <div style="margin-bottom: 18px;">
                 <a-button type="primary" ghost @click="addClick">新增</a-button>
-                <a-button style="margin-left: 8px"> 删除</a-button>
+                <a-button style="margin-left: 8px" @click="deleteClick"> 删除</a-button>
                 <a-dropdown>
                     <a-menu slot="overlay">
                         <a-menu-item key="1">
@@ -67,9 +61,9 @@
                      @change="handleTableChange"
                      :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}"
             >
-                <template slot="operation">
-                    <a-icon type="setting" theme="twoTone" twoToneColor="#4a9ff5" title="修改用户"></a-icon>
-                    <a-icon type="eye" theme="twoTone" twoToneColor="#42b983" title="查看"></a-icon>
+                <template slot="operation" slot-scope="text, record">
+                    <a-icon type="setting" theme="twoTone" twoToneColor="#4a9ff5" title="修改用户"
+                            @click="updateClick(record)"></a-icon>
                 </template>
             </a-table>
         </div>
@@ -80,59 +74,89 @@
 
 <script>
     import RoleEdit from "@/views/system/role/RoleEdit";
-    const columns = [
-        {
-            title: '角色',
-            dataIndex: 'roleName'
-        }, {
-            title: '描述',
-            dataIndex: 'remark',
-            scopedSlots: {customRender: 'remark'},
-            width: 350
-        }, {
-            title: '创建时间',
-            dataIndex: 'createTime',
-            sorter: true,
-        }, {
-            title: '修改时间',
-            dataIndex: 'modifyTime',
-            sorter: true,
-        }, {
-            title: '操作',
-            dataIndex: 'operation',
-            scopedSlots: {customRender: 'operation'}
-        }
-    ]
 
     export default {
         name: "role",
         components: {RoleEdit},
         data() {
             return {
-                columns,
                 data: [],
                 loading: false,
                 selectedRowKeys: [], //选中
                 pagination: {
-                    pageSizeOptions: ['10', '20', '30', '40', '100'],
+                    pageSizeOptions: ["5", "10", "20", "30", "40", "100"],
                     defaultCurrent: 1,
+                    current: 1,
                     total: 0,
-                    defaultPageSize: 10,
-                    showSizeChanger: true, //是否可以改变 pageSize
+                    defaultPageSize: 5,
+                    pageSize: 5,
+                    showSizeChanger: true //是否可以改变 pageSize
                 },
-                rangeConfig: {
-                    rules: [{ type: 'array', required: true, message: 'Please select time!' }],
-                },
+
+                sorter: {},
+                searchParams: {},
+
+            }
+        },
+        computed: {
+            columns() {
+                let { sorter } = this;
+                sorter = sorter || {};
+                return [
+                    {
+                        title: '角色',
+                        dataIndex: 'roleName'
+                    }, {
+                        title: '描述',
+                        dataIndex: 'remark',
+                        scopedSlots: {customRender: 'remark'},
+                        width: 350
+                    }, {
+                        title: '创建时间',
+                        dataIndex: 'createTime',
+                        sorter: true,
+                        sortOrder: sorter.columnKey === 'createTime' && sorter.order
+                    }, {
+                        title: '修改时间',
+                        dataIndex: 'modifyTime',
+                        sorter: true,
+                        sortOrder: sorter.columnKey === 'modifyTime' && sorter.order
+                    }, {
+                        title: '操作',
+                        dataIndex: 'operation',
+                        scopedSlots: {customRender: 'operation'}
+                    }
+                ];
             }
         },
         created() {
-            this.roleData();
+            this.roleData({}, this.pagination);
         },
         methods: {
-            roleData() {
+            handleTableChange(pagination, filters, sorter) {
+                this.pagination = pagination;
+                this.sorter = sorter;
+                this.roleData(this.searchParams, pagination, sorter);
+            },
+             roleData(searchParams = {}, pagination = {}, sorter = {}) {
+                if (searchParams.createTime && searchParams.createTime.length > 0) {
+                    const from = searchParams.createTime[0];
+                    const to = searchParams.createTime[1];
+                    searchParams.createTimeFrom = from.format("YYYY-MM-DD");
+                    searchParams.createTimeTo = to.format("YYYY-MM-DD");
+                } else {
+                    searchParams.createTimeFrom = "";
+                    searchParams.createTimeTo = "";
+                }
                 this.$api.userManager.getRole({
-                    pageNum: this.pagination.defaultCurrent,
-                    pageSize: this.pagination.defaultPageSize,
+                    createTimeFrom: searchParams.createTimeFrom,
+                    createTimeTo: searchParams.createTimeTo,
+                    roleId: searchParams.roleId,
+
+                    pageNum: pagination.current,
+                    pageSize: pagination.pageSize,
+                    sortField: sorter.field,
+                    sortOrder: sorter.order,
                 }).then(res => {
                     this.data = res.data.rows;
                     this.pagination.total = res.data.total;
@@ -141,6 +165,45 @@
             addClick() {
                 this.$refs.modal.add();
             },
+            updateClick(data) {
+                this.$refs.modal.update(data);
+            },
+            deleteClick() {
+                if (!this.selectedRowKeys.length) {
+                    this.$message.warning("请选择需要删除的记录");
+                    return;
+                }
+                let that = this;
+                this.$confirm({
+                    title: "确定删除所选中的记录?",
+                    content: "当您点击确定按钮后，这些记录将会被彻底删除",
+                    centered: true,
+                    onOk() {
+                        that.$api.userManager.deleteRole(that.selectedRowKeys).then(() => {
+                            that.$message.success("删除成功");
+                            that.selectedRowKeys = [];
+                            that.roleData({},that.pagination);
+                        });
+                    },
+                    onCancel() {
+                        that.selectedRowKeys = [];
+                    }
+                });
+            },
+            reset() {
+                this.searchParams = {};
+                this.sorter = {};
+                this.pagination.current = 1;
+                this.roleData({}, this.pagination);
+            },
+            search() {
+                this.pagination.current = 1;
+                this.roleData(
+                    this.searchParams,
+                    this.pagination,
+                    this.sorter,
+                );
+            },
             onSelectChange(selectedRowKeys) {
                 console.log('selectedRowKeys changed: ', selectedRowKeys);
                 this.selectedRowKeys = selectedRowKeys
@@ -148,24 +211,8 @@
             toggleAdvanced() {
                 this.advanced = !this.advanced;
             },
-            handleTableChange(pagination, filters, sorter) {
-                console.log(pagination);
-                console.log(filters);
-                console.log(sorter);
-                this.$api.userManager.getRole({
-                    pageNum: pagination.current,
-                    pageSize: pagination.pageSize,
-                    sortField: sorter.field,
-                    sortOrder: sorter.order,
-                }).then(res => {
-                    this.data = res.data.rows;
-                    this.pagination.total = res.data.total
-                })
-
-
-            },
             handleOk() {
-                this.roleData();
+                this.roleData({},this.pagination);
             },
         }
     }

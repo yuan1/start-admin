@@ -278,7 +278,7 @@ export default {
           that.$api.userManager.deleteUser(that.selectedRowKeys).then(() => {
             that.$message.success("删除成功");
             that.selectedRowKeys = [];
-            this.userData({},this.pagination);
+            that.userData({},that.pagination);
           });
         },
         onCancel() {
