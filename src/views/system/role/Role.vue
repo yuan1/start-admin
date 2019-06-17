@@ -94,7 +94,6 @@
                 },
 
                 sorter: {},
-                filters: {},
                 searchParams: {},
 
             }
@@ -131,15 +130,15 @@
             }
         },
         created() {
-            this.roleData({}, this.pagination);
+            this.roleData(this.pagination);
         },
         methods: {
             handleTableChange(pagination, filters, sorter) {
                 this.pagination = pagination;
                 this.sorter = sorter;
-                this.roleData(this.searchParams, pagination, sorter);
+                this.roleData(pagination, sorter,this.searchParams);
             },
-             roleData(searchParams = {}, pagination = {}, sorter = {}) {
+             roleData(pagination = {}, sorter = {},searchParams = {}) {
                 if (searchParams.createTime && searchParams.createTime.length > 0) {
                     const from = searchParams.createTime[0];
                     const to = searchParams.createTime[1];
@@ -183,7 +182,7 @@
                         that.$api.userManager.deleteRole(that.selectedRowKeys).then(() => {
                             that.$message.success("删除成功");
                             that.selectedRowKeys = [];
-                            that.roleData({},that.pagination);
+                            that.roleData(that.pagination);
                         });
                     },
                     onCancel() {
@@ -195,14 +194,14 @@
                 this.searchParams = {};
                 this.sorter = {};
                 this.pagination.current = 1;
-                this.roleData({}, this.pagination);
+                this.roleData(this.pagination);
             },
             search() {
                 this.pagination.current = 1;
                 this.roleData(
-                    this.searchParams,
                     this.pagination,
                     this.sorter,
+                    this.searchParams,
                 );
             },
             onSelectChange(selectedRowKeys) {
@@ -213,7 +212,7 @@
                 this.advanced = !this.advanced;
             },
             handleOk() {
-                this.roleData({},this.pagination);
+                this.roleData(this.pagination);
             },
         }
     }

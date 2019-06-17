@@ -29,40 +29,24 @@
                          v-bind="formItemLayout">
                 <a-tree
                         :key="menuTreeKey"
-                        ref="menuTree"
                         :checkable="true"
-                        :checkStrictly="checkStrictly"
-                        @check="handleCheck"
-                        @expand="handleExpand"
-                        :expandedKeys="expandedKeys"
+                        :defaultExpandAll="true"
+                        :checkStrictly="true"
+                        v-model="checkedKeys"
                         :treeData="menuData">
                 </a-tree>
             </a-form-item>
         </a-form>
-<!--        <div class="drawer-bootom-button">-->
-<!--            <a-dropdown style="float: left" :trigger="['click']" placement="topCenter">-->
-<!--                <a-menu slot="overlay">-->
-<!--                    <a-menu-item key="1">展开所有</a-menu-item>-->
-<!--                    <a-menu-item key="2">合并所有</a-menu-item>-->
-<!--                    <a-menu-item key="3">父子关联</a-menu-item>-->
-<!--                    <a-menu-item key="4">取消关联</a-menu-item>-->
-<!--                </a-menu>-->
-<!--                <a-button>-->
-<!--                    树操作-->
-<!--                    <a-icon type="up"/>-->
-<!--                </a-button>-->
-<!--            </a-dropdown>-->
-<!--        </div>-->
     </a-modal>
 </template>
 
 <script>
     export default {
         name: "RoleEdit",
-        data(){
-            return{
+        data() {
+            return {
                 visible: false,
-                loading :false,
+                loading: false,
                 confirmLoading: false,
                 roleId: undefined,
                 menuId: '',
@@ -73,28 +57,17 @@
                 },
                 menuTreeKey: +new Date(),
                 menuData: [],
-                allTreeKeys: [],
-                checkStrictly: true, //checkable状态下节点选择完全受控
                 checkedKeys: [],
-                defaultCheckedKeys: [],
-                expandedKeys: [], //（受控）展开指定的树节点
-
-                menuSelectStatus: '',
-                menuSelectHelp: '',
-
-
             }
         },
-        created(){
+        created() {
             this.menuDate();
         },
-        methods:{
-            menuDate(){
+        methods: {
+            menuDate() {
                 this.$api.userManager.getMenu().then((res) => {
                     this.menuData = res.data.rows.children;
-                    this.allTreeKeys = res.data.ids;
                 })
-
             },
             ok() {
                 this.confirmLoading = false;
@@ -149,38 +122,26 @@
                 this.visible = true;
                 const {form: {setFieldsValue}} = this;
                 this.$nextTick(() => {
-                    setFieldsValue({roleName: '', remark: '',menuId:''})
+                    setFieldsValue({roleName: '', remark: '', menuId: ''})
                 });
                 this.reset();
             },
             update(data) {
-                this.visible = true;
                 this.roleId = data.roleId;
+                this.visible = true;
+                this.checkedKeys=[];
+                if (this.roleId) {
+                    this.$api.userManager.getRoleMenu(this.roleId).then(res => {
+                        this.checkedKeys = res.data;
+                    });
+                }
                 const {form: {setFieldsValue}} = this;
                 this.$nextTick(() => {
-                    setFieldsValue({roleName: data.roleName, remark: data.remark,menuId: data.menuId})
+                    setFieldsValue({roleName: data.roleName, remark: data.remark})
                 });
-            },
-            //点击复选框触发
-            handleCheck(checkedKeys){
-                this.checkedKeys = checkedKeys;
-                let checkedArr = Object.is(checkedKeys.checked, undefined) ? checkedKeys : checkedKeys.checked;
-                if (checkedArr.length) {
-                    this.menuSelectStatus = '';
-                    this.menuSelectHelp = ''
-                } else {
-                    this.menuSelectStatus = 'error';
-                    this.menuSelectHelp = '请选择相应的权限';
-                }
-
-            },
-            //展开/收起节点时触发
-            handleExpand(expandedKeys){
-                this.expandedKeys = expandedKeys;
             },
             reset() {
                 this.menuTreeKey = +new Date();
-                this.expandedKeys = this.checkedKeys = [];
                 this.loading = false;
                 this.form.resetFields();
             },

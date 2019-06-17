@@ -87,7 +87,6 @@
                 },
                 loading: false,
                 filters: {},
-                sorter: {},
                 searchParams: {}
             }
         },
@@ -113,8 +112,7 @@
                         {text: '菜单', value: '0'}
                     ],
                     filterMultiple: false,
-                    filteredValue: filters.type || null,
-                    onFilter: (value, record) => record.type.includes(value)
+                    filteredValue: filters.type || null
                 }, {
                     title: '地址',
                     dataIndex: 'path'
@@ -143,16 +141,14 @@
             }
         },
         created() {
-            this.menuData({}, this.pagination);
+            this.menuData();
         },
         methods: {
-            handleTableChange(pagination, filters, sorter) {
-                this.pagination = pagination;
+            handleTableChange(pagination, filters) {
                 this.filters = filters;
-                this.sorter = sorter;
-                this.menuData(this.searchParams, pagination,filters );
+                this.menuData(filters,this.searchParams );
             },
-            menuData(searchParams = {}, pagination = {}, filters = {}) {
+            menuData(filters = {},searchParams = {}) {
                 if (searchParams.createTime && searchParams.createTime.length > 0) {
                     const from = searchParams.createTime[0];
                     const to = searchParams.createTime[1];
@@ -166,13 +162,9 @@
                     createTimeFrom: searchParams.createTimeFrom,
                     createTimeTo: searchParams.createTimeTo,
                     menuName: searchParams.menuName,
-
-                    pageNum: pagination.current,
-                    pageSize: pagination.pageSize,
                     type: filters.type ? filters.type[0] : null,
                 }).then(res => {
-                    this.data = res.data.rows;
-                    this.pagination.total = res.data.total;
+                    this.data = res.data.rows.children;
                 })
             },
             onSelectChange(selectedRowKeys) {
@@ -198,7 +190,7 @@
                         that.$api.userManager.deleteMenu().then(() => {
                             that.$message.success('删除成功');
                             that.selectedRowKeys = [];
-                            that.menuData({}, that.pagination);
+                            that.menuData();
                         })
                     },
                     onCancel() {
@@ -208,19 +200,11 @@
             },
             reset() {
                 this.searchParams = {};
-                this.sorter = {};
                 this.filters = {};
-                this.pagination.current = 1;
-                this.userData({}, this.pagination);
+                this.menuData();
             },
             search() {
-                this.pagination.current = 1;
-                this.userData(
-                    this.searchParams,
-                    this.pagination,
-                    this.sorter,
-                    this.filters
-                );
+                this.menuData(this.filters, this.searchParams,);
             },
         }
     }
