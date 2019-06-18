@@ -40,8 +40,8 @@ const userManager = {
     },
 
     /* 部门 */
-    getDept() {
-        return axios.get(`${base.api}/dept`)
+    getDept(params) {
+        return axios.get(`${base.api}/dept`,{ params: params })
     },
     createDept(data){
         return axios.post(`${base.api}/dept`, data)

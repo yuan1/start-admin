@@ -12,7 +12,7 @@
         <a-form :form="form">
             <a-form-item label='部门名称' v-bind="formItemLayout">
                 <a-input
-                         v-decorator="['deptName',
+                        v-decorator="['deptName',
                    {rules: [
                     { required: true, message: '部门名称不能为空'},
                     { max: 20, message: '长度不能超过20个字符'}
@@ -24,14 +24,16 @@
             <a-form-item label='上级部门'
                          style="margin-bottom: 2rem"
                          v-bind="formItemLayout">
-                <a-tree
-                        :key="deptTreeKey"
-                        :checkable="true"
-                        :defaultExpandAll="true"
-                        :checkStrictly="true"
-                        v-model="checkedKeys"
-                        :treeData="deptData">
-                </a-tree>
+                <a-tree-select
+                        style="width: 300px"
+                        :dropdownStyle="{ maxHeight: '400px', overflow: 'auto' }"
+                        :treeData="deptData"
+                        placeholder='Please select'
+                        treeDefaultExpandAll
+                        allowClear
+                        v-model="parentId"
+                >
+                </a-tree-select>
             </a-form-item>
         </a-form>
     </a-modal>
@@ -40,26 +42,22 @@
 <script>
     export default {
         name: "DeptEdit",
-        data(){
-            return{
+        data() {
+            return {
                 visible: false,
                 loading: false,
                 confirmLoading: false,
-                id:undefined,
+                id: undefined,
+                parentId: undefined,
                 form: this.$form.createForm(this),
                 formItemLayout: {
                     labelCol: {span: 3},
                     wrapperCol: {span: 18}
                 },
-                deptTreeKey: +new Date(),
                 deptData: [],
-                checkedKeys: [],
             }
         },
-        created() {
-            this.deptDate();
-        },
-        methods:{
+        methods: {
             deptDate() {
                 this.$api.userManager.getDept().then((res) => {
                     this.deptData = res.data.rows.children;
@@ -71,13 +69,13 @@
                 this.$emit("ok");
             },
             handleOk() {
-                let checkedArr = Object.is(this.checkedKeys.checked, undefined) ? this.checkedKeys : this.checkedKeys.checked;
-                console.log("checkedArr",checkedArr);
                 this.form.validateFields((err, values) => {
                     if (!err) {
                         console.log("Received values of form: ", values);
                         this.confirmLoading = true;
-                        this.parentId = checkedArr[0];
+                        if (this.parentId === undefined || this.parentId === '') {
+                            this.parentId = 0;
+                        }
                         if (!this.id) {
                             this.$api.userManager
                                 .createDept({
@@ -98,7 +96,7 @@
                                     deptName: values.deptName,
                                     orderNum: values.orderNum,
                                     parentId: this.parentId,
-                                    id: this.id,
+                                    deptId: this.id,
                                 })
                                 .then(() => {
                                     this.ok();
@@ -116,26 +114,17 @@
                 this.visible = false;
             },
             add() {
-                this.visible = true;
-                const {form: {setFieldsValue}} = this;
-                this.$nextTick(() => {
-                    setFieldsValue({deptName: '', orderNum: '', parentId: ''})
-                });
-                this.reset();
+                this.update({});
             },
             update(data) {
+                this.deptDate();
                 this.id = data.id;
+                this.parentId = data.parentId === "0" ? undefined : data.parentId;
                 this.visible = true;
                 const {form: {setFieldsValue}} = this;
                 this.$nextTick(() => {
-                    setFieldsValue({deptName: data.deptName, orderNum: data.orderNum,parentId: data.parentId})
+                    setFieldsValue({deptName: data.text, orderNum: data.order})
                 });
-            },
-            reset() {
-                this.deptTreeKey = +new Date();
-                this.loading = false;
-                this.checkedKeys = [];
-                this.form.resetFields();
             },
         }
     }

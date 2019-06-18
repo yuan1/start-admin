@@ -55,14 +55,16 @@
             <a-form-item label='上级菜单'
                          style="margin-bottom: 2rem"
                          v-bind="formItemLayout">
-                <a-tree
-                        :key="menuTreeKey"
-                        :checkable="true"
-                        :defaultExpandAll="true"
-                        :checkStrictly="true"
-                        v-model="checkedKeys"
-                        :treeData="menuData">
-                </a-tree>
+                <a-tree-select
+                        style="width: 300px"
+                        :dropdownStyle="{ maxHeight: '400px', overflow: 'auto' }"
+                        :treeData="menuData"
+                        placeholder='Please select'
+                        treeDefaultExpandAll
+                        allowClear
+                        v-model="parentId"
+                >
+                </a-tree-select>
             </a-form-item>
         </a-form>
     </a-modal>
@@ -83,13 +85,8 @@
                     labelCol: {span: 3},
                     wrapperCol: {span: 18}
                 },
-                menuTreeKey: +new Date(),
                 menuData: [],
-                checkedKeys: [],
             }
-        },
-        created() {
-            this.menuDate();
         },
         methods: {
             menuDate() {
@@ -103,14 +100,13 @@
                 this.$emit("ok");
             },
             handleOk() {
-                let checkedArr = Object.is(this.checkedKeys.checked, undefined) ? this.checkedKeys : this.checkedKeys.checked
                 this.form.validateFields((err, values) => {
                     if (!err) {
                         console.error("Received values of form21eee额非常的欣赏: ", values);
                         this.confirmLoading = true;
-                        this.parentId = checkedArr[0];
-                        // 0 表示菜单 1 表示按钮
-                        this.type = '0';
+                        if (this.parentId === undefined || this.parentId === '') {
+                            this.parentId = 0;
+                        }
                         if (!this.id) {
                             this.$api.userManager.createMenu({
                                 menuName: values.menuName,
@@ -120,7 +116,7 @@
                                 icon: values.icon,
                                 orderNum: values.orderNum,
                                 parentId: this.parentId,
-                                type: this.type,
+                                type: '0',
 
                             }).then(() => {
                                 this.ok();
@@ -139,7 +135,7 @@
                                 orderNum: values.orderNum,
                                 parentId: this.parentId,
                                 id: this.id,
-                                type: this.type,
+                                type: '0',
                             }).then(() => {
                                 this.ok();
                                 this.$message.success("修改菜单成功");
@@ -155,41 +151,20 @@
                 this.visible = false;
             },
             addMenu() {
+                this.updateMenu({})
+            },
+            updateMenu(data) {
+                this.menuDate();
+                this.id = data.id;
+                this.parentId = data.parentId === "0" ? undefined : data.parentId;
                 this.visible = true;
                 const {form: {setFieldsValue}} = this;
                 this.$nextTick(() => {
                     setFieldsValue({
-                        menuName: '',
-                        path: '',
-                        component: '',
-                        perms: '',
-                        icon: '',
-                        orderNum: '',
-                        parentId: ''
+                        menuName: data.text, path: data.path,
+                        component: data.component, perms: data.permission, icon: data.icon, orderNum: data.order
                     })
                 });
-                this.reset();
-            },
-            updateMenu(data) {
-                this.id = data.id;
-                this.visible = true;
-                this.checkedKeys=[];
-                if (this.id) {
-                    this.$api.userManager.getRoleMenu(this.id).then(res => {
-                        this.checkedKeys = res.data;
-                    });
-                }
-                const {form: {setFieldsValue}} = this;
-                this.$nextTick(() => {
-                    setFieldsValue({menuName: data.text, path: data.path,
-                        component: data.component,perms: data.permission,icon: data.icon,orderNum: data.order,parentId:data.parentId})
-                });
-            },
-            reset() {
-                this.menuTreeKey = +new Date();
-                this.loading = false;
-                this.checkedKeys = [];
-                this.form.resetFields();
             },
         }
     }

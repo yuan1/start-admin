@@ -30,7 +30,7 @@
                 <a-tree
                         :key="menuTreeKey"
                         :checkable="true"
-                        :defaultExpandAll="true"
+                        :defaultExpandAll="!roleId?false:true"
                         :checkStrictly="true"
                         v-model="checkedKeys"
                         :treeData="menuData">
@@ -110,7 +110,6 @@
                                 .catch(() => {
                                     this.confirmLoading = false;
                                 });
-
                         }
                     }
                 });
@@ -119,17 +118,12 @@
                 this.visible = false;
             },
             add() {
-                this.visible = true;
-                const {form: {setFieldsValue}} = this;
-                this.$nextTick(() => {
-                    setFieldsValue({roleName: '', remark: '', menuId: ''})
-                });
-                this.reset();
+                this.update({});
             },
             update(data) {
                 this.roleId = data.roleId;
                 this.visible = true;
-                this.checkedKeys=[];
+                this.checkedKeys = [];
                 if (this.roleId) {
                     this.$api.userManager.getRoleMenu(this.roleId).then(res => {
                         this.checkedKeys = res.data;
@@ -139,13 +133,7 @@
                 this.$nextTick(() => {
                     setFieldsValue({roleName: data.roleName, remark: data.remark})
                 });
-            },
-            reset() {
-                this.menuTreeKey = +new Date();
-                this.loading = false;
-                this.form.resetFields();
-            },
-
+            }
         }
     }
 </script>

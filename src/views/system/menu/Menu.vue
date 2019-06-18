@@ -53,7 +53,7 @@
             </div>
             <!-- 表格区域 -->
             <a-table :columns="columns"
-                     :key="key"
+                     rowKey="id"
                      :dataSource="data"
                      :pagination="pagination"
                      :loading="loading"

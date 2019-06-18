@@ -58,9 +58,6 @@
                 checkedKeys: [],
             }
         },
-        created() {
-            this.menuDate();
-        },
         methods: {
             menuDate() {
                 this.$api.userManager.getMenu().then((res) => {
@@ -117,17 +114,13 @@
                 this.visible = false;
             },
             addButton() {
-                this.visible = true;
-                const {form: {setFieldsValue}} = this;
-                this.$nextTick(() => {
-                    setFieldsValue({menuName: '', parentId: ''})
-                });
-                this.reset();
+                this.updateButton({});
             },
             updateButton(data) {
+                this.menuDate();
                 this.id = data.id;
                 this.visible = true;
-                this.checkedKeys=[];
+                this.checkedKeys = [];
                 if (this.id) {
                     this.$api.userManager.getRoleMenu(this.id).then(res => {
                         this.checkedKeys = res.data;
@@ -135,16 +128,9 @@
                 }
                 const {form: {setFieldsValue}} = this;
                 this.$nextTick(() => {
-                    setFieldsValue({menuName: data.text, parentId: data.parentId,perms: data.permission,})
+                    setFieldsValue({menuName: data.text, parentId: data.parentId, perms: data.permission,})
                 });
-            },
-            reset() {
-                this.menuTreeKey = +new Date();
-                this.loading = false;
-                this.checkedKeys = [];
-                this.form.resetFields();
-            },
-
+            }
         }
     }
 </script>

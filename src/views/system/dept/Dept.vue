@@ -45,7 +45,7 @@
             </div>
             <!-- 表格区域 -->
             <a-table :columns="columns"
-                     :key="key"
+                     rowKey="id"
                      :dataSource="data"
                      :pagination="pagination"
                      :loading="loading"
@@ -148,6 +148,7 @@
             },
             updateClick(data) {
                 this.$refs.modal.update(data);
+                console.log('1111111',data)
             },
             deleteClick() {
                 if (!this.selectedRowKeys.length) {
