@@ -43,10 +43,7 @@
                 <a-button style="margin-left: 8px" @click="deleteClick"> 删除</a-button>
                 <a-dropdown>
                     <a-menu slot="overlay">
-                        <a-menu-item key="1">
-                            <a-icon type="user"/>
-                            导出Excel
-                        </a-menu-item>
+                        <a-menu-item key="export-data">导出Excel</a-menu-item>
                     </a-menu>
                     <a-button style="margin-left: 8px" type="primary" ghost>
                         更多操作

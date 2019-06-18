@@ -175,7 +175,7 @@
                 this.visible = true;
                 this.checkedKeys=[];
                 if (this.menuId) {
-                    this.$api.userManager.getRoleMenu(this.menuId).then(res => {
+                    this.$api.userManager.getMenuId(this.menuId).then(res => {
                         this.checkedKeys = res.data;
                     });
                 }
