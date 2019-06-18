@@ -1,9 +1,9 @@
 <template>
-    <a-card :bordered="false" class="card-area">
+    <a-card :bordered="false">
         <div>
             <!-- 搜索区域 -->
             <a-form layout="horizontal">
-                <div :class="advanced ? null: 'fold'">
+                <div>
                     <a-row>
                         <a-col :md="12" :sm="24">
                             <a-form-item
@@ -30,20 +30,25 @@
             </a-form>
         </div>
         <div>
-            <div class="operator">
+            <div style="margin-bottom: 18px;">
                 <a-popconfirm
                         title="请选择创建类型"
                         okText="按钮"
-                        cancelText="菜单">
+                        cancelText="菜单"
+                        @cancel="() => addMenuClick()"
+                        @confirm="() => addButtonClick()">
                     <a-icon slot="icon" type="question-circle-o" style="color: orangered"/>
-                    <a-button type="primary" ghost @click="addClick">新增</a-button>
+                    <a-button type="primary" ghost>新增</a-button>
                 </a-popconfirm>
-                <a-button @click="deleteClick">删除</a-button>
+                <a-button style="margin-left: 8px" @click="deleteClick"> 删除</a-button>
                 <a-dropdown>
                     <a-menu slot="overlay">
-                        <a-menu-item key="export-data">导出Excel</a-menu-item>
+                        <a-menu-item key="1">
+                            <a-icon type="user"/>
+                            导出Excel
+                        </a-menu-item>
                     </a-menu>
-                    <a-button>
+                    <a-button style="margin-left: 8px" type="primary" ghost>
                         更多操作
                         <a-icon type="down"/>
                     </a-button>
@@ -64,17 +69,22 @@
                     <a-tag v-if="text==='0'" color="cyan"> 菜单</a-tag>
                     <a-tag v-if="text==='1'" color="pink"> 按钮</a-tag>
                 </template>
+                <template slot="operation" slot-scope="text,record">
+                    <a-icon  type="setting" theme="twoTone" twoToneColor="#4a9ff5" title="修改"  @click="updateMenuClick(record)"></a-icon>
+                </template>
             </a-table>
         </div>
         <MenuEdit ref="modal" @ok="handleOk"/>
+        <ButtonEdit ref="model" @ok="handleOk"/>
     </a-card>
 </template>
 
 <script>
-    import MenuEdit from "@/views/system/menu/MenuAdd";
+    import MenuEdit from "@/views/system/menu/MenuEdit";
+    import ButtonEdit from "@/views/system/menu/ButtonEdit";
     export default {
         name: "Menu",
-        components: {MenuEdit},
+        components: {ButtonEdit, MenuEdit},
         data() {
             return {
                 advanced: false,
@@ -112,7 +122,8 @@
                         {text: '菜单', value: '0'}
                     ],
                     filterMultiple: false,
-                    filteredValue: filters.type || null
+                    filteredValue: filters.type || null,
+                    onFilter: (value, record) => record.status.includes(value)
                 }, {
                     title: '地址',
                     dataIndex: 'path'
@@ -170,11 +181,14 @@
             onSelectChange(selectedRowKeys) {
                 this.selectedRowKeys = selectedRowKeys
             },
-            addClick() {
-                this.$refs.modal.add();
+            addMenuClick() {
+                this.$refs.modal.addMenu();
             },
-            updateClick(data) {
-                this.$refs.modal.update(data);
+            updateMenuClick(data) {
+                this.$refs.modal.updateMenu(data);
+            },
+            addButtonClick() {
+                this.$refs.model.addButton();
             },
             deleteClick() {
                 if (!this.selectedRowKeys.length) {
@@ -205,6 +219,9 @@
             },
             search() {
                 this.menuData(this.filters, this.searchParams,);
+            },
+            handleOk() {
+                this.menuData();
             },
         }
     }
