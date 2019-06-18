@@ -189,12 +189,14 @@
             },
             updateMenuClick(record) {
                 this.$refs.modal.updateMenu(record);
+                console.log('11111123dcfccccf',record)
             },
             addButtonClick() {
                 this.$refs.model.addButton();
             },
             updateButton(record) {
                 this.$refs.model.updateButton(record);
+                console.log('3333333',record)
             },
             deleteClick(){
                 if (!this.selectedRowKeys.length) {

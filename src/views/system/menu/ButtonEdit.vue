@@ -1,6 +1,6 @@
 <template>
     <a-modal
-            :title="!menuId?'新增按钮':'修改按钮'"
+            :title="!id?'新增按钮':'修改按钮'"
             :visible="visible"
             :centered="true"
             :keyboard="false"
@@ -46,7 +46,7 @@
                 visible: false,
                 loading: false,
                 confirmLoading: false,
-                menuId: undefined,
+                id: undefined,
                 parentId: '',
                 form: this.$form.createForm(this),
                 formItemLayout: {
@@ -76,7 +76,7 @@
                         this.parentId = checkedArr[0];
                         // 0 表示菜单 1 表示按钮
                         this.type = '1';
-                        if (!this.menuId) {
+                        if (!this.id) {
                             this.$api.userManager.createMenu({
                                 menuName: values.menuName,
                                 parentId: this.parentId,
@@ -94,7 +94,7 @@
                             this.$api.userManager.updateMenu({
                                 menuName: values.menuName,
                                 parentId: this.parentId,
-                                menuId: this.menuId,
+                                id: this.id,
                                 type: this.type,
                             })
                                 .then(() => {
@@ -125,17 +125,17 @@
                 this.reset();
             },
             updateButton(data) {
-                this.menuId = data.menuId;
+                this.id = data.id;
                 this.visible = true;
                 this.checkedKeys=[];
-                if (this.menuId) {
-                    this.$api.userManager.getRoleMenu(this.menuId).then(res => {
+                if (this.id) {
+                    this.$api.userManager.getRoleMenu(this.id).then(res => {
                         this.checkedKeys = res.data;
                     });
                 }
                 const {form: {setFieldsValue}} = this;
                 this.$nextTick(() => {
-                    setFieldsValue({menuName: data.menuName, parentId: data.parentId})
+                    setFieldsValue({menuName: data.text, parentId: data.parentId,perms: data.permission,})
                 });
             },
             reset() {

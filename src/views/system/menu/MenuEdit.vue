@@ -1,6 +1,6 @@
 <template>
     <a-modal
-            :title="!menuId?'新增菜单':'修改菜单'"
+            :title="!id?'新增菜单':'修改菜单'"
             :visible="visible"
             :centered="true"
             :keyboard="false"
@@ -76,7 +76,7 @@
                 visible: false,
                 loading: false,
                 confirmLoading: false,
-                menuId: undefined,
+                id: undefined,
                 parentId: '',
                 form: this.$form.createForm(this),
                 formItemLayout: {
@@ -111,12 +111,12 @@
                         this.parentId = checkedArr[0];
                         // 0 表示菜单 1 表示按钮
                         this.type = '0';
-                        if (!this.menuId) {
+                        if (!this.id) {
                             this.$api.userManager.createMenu({
                                 menuName: values.menuName,
                                 path: values.path,
                                 component: values.component,
-                                perms: values.perms,
+                                perms: values.permission,
                                 icon: values.icon,
                                 orderNum: values.orderNum,
                                 parentId: this.parentId,
@@ -134,11 +134,11 @@
                                 menuName: values.menuName,
                                 path: values.path,
                                 component: values.component,
-                                perms: values.perms,
+                                perms: values.permission,
                                 icon: values.icon,
                                 orderNum: values.orderNum,
                                 parentId: this.parentId,
-                                menuId: this.menuId,
+                                id: this.id,
                                 type: this.type,
                             }).then(() => {
                                 this.ok();
@@ -171,18 +171,18 @@
                 this.reset();
             },
             updateMenu(data) {
-                this.menuId = data.menuId;
+                this.id = data.id;
                 this.visible = true;
                 this.checkedKeys=[];
-                if (this.menuId) {
-                    this.$api.userManager.getMenuId(this.menuId).then(res => {
+                if (this.id) {
+                    this.$api.userManager.getRoleMenu(this.id).then(res => {
                         this.checkedKeys = res.data;
                     });
                 }
                 const {form: {setFieldsValue}} = this;
                 this.$nextTick(() => {
-                    setFieldsValue({menuName: data.menuName, path: data.path,
-                        component: data.component,perms: data.perms,icon: data.icon,orderNum: data.orderNum,parentId:data.parentId})
+                    setFieldsValue({menuName: data.text, path: data.path,
+                        component: data.component,perms: data.permission,icon: data.icon,orderNum: data.order,parentId:data.parentId})
                 });
             },
             reset() {

@@ -52,9 +52,6 @@ const userManager = {
     deleteDept(deptIds) {
         return axios.delete(`${base.api}/dept/${deptIds.join(',')}`)
     },
-    getDeptMenu(deptId) {
-        return axios.get(`${base.api}/dept/menu/${deptId}`)
-    },
     /* 菜单 */
     getMenu(params) {
         return axios.get(`${base.api}/menu`,{ params: params })
@@ -67,9 +64,6 @@ const userManager = {
     } ,
     deleteMenu(menuIds) {
         return axios.delete(`${base.api}/menu/${menuIds.join(',')}`)
-    },
-    getMenuId(menuId) {
-        return axios.get(`${base.api}/menu/menu/${menuId}`)
     },
 
 };

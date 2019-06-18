@@ -1,6 +1,6 @@
 <template>
     <a-modal
-            :title="!deptId?'新增部门':'修改部门'"
+            :title="!id?'新增部门':'修改部门'"
             :visible="visible"
             :centered="true"
             :keyboard="false"
@@ -45,7 +45,7 @@
                 visible: false,
                 loading: false,
                 confirmLoading: false,
-                deptId:undefined,
+                id:undefined,
                 form: this.$form.createForm(this),
                 formItemLayout: {
                     labelCol: {span: 3},
@@ -72,12 +72,13 @@
             },
             handleOk() {
                 let checkedArr = Object.is(this.checkedKeys.checked, undefined) ? this.checkedKeys : this.checkedKeys.checked;
+                console.log("checkedArr",checkedArr);
                 this.form.validateFields((err, values) => {
                     if (!err) {
                         console.log("Received values of form: ", values);
                         this.confirmLoading = true;
                         this.parentId = checkedArr[0];
-                        if (!this.deptId) {
+                        if (!this.id) {
                             this.$api.userManager
                                 .createDept({
                                     deptName: values.deptName,
@@ -97,7 +98,7 @@
                                     deptName: values.deptName,
                                     orderNum: values.orderNum,
                                     parentId: this.parentId,
-                                    deptId: this.deptId,
+                                    id: this.id,
                                 })
                                 .then(() => {
                                     this.ok();
@@ -123,14 +124,8 @@
                 this.reset();
             },
             update(data) {
-                this.deptId = data.deptId;
+                this.id = data.id;
                 this.visible = true;
-                this.checkedKeys=[];
-                if (this.deptId) {
-                    this.$api.userManager.getDeptMenu(this.deptId).then(res => {
-                        this.checkedKeys = res.data;
-                    });
-                }
                 const {form: {setFieldsValue}} = this;
                 this.$nextTick(() => {
                     setFieldsValue({deptName: data.deptName, orderNum: data.orderNum,parentId: data.parentId})
