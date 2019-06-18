@@ -122,11 +122,28 @@
                                 parentId: this.parentId,
                                 type: this.type,
 
+                            }).then(() => {
+                                this.ok();
+                                this.$message.success("新增菜单成功");
                             })
-                                .then(() => {
-                                    this.ok();
-                                    this.$message.success("新增菜单成功");
-                                })
+                                .catch(() => {
+                                    this.confirmLoading = false;
+                                });
+                        } else {
+                            this.$api.userManager.updateMenu({
+                                menuName: values.menuName,
+                                path: values.path,
+                                component: values.component,
+                                perms: values.perms,
+                                icon: values.icon,
+                                orderNum: values.orderNum,
+                                parentId: this.parentId,
+                                menuId: this.menuId,
+                                type: this.type,
+                            }).then(() => {
+                                this.ok();
+                                this.$message.success("修改菜单成功");
+                            })
                                 .catch(() => {
                                     this.confirmLoading = false;
                                 });
@@ -141,9 +158,32 @@
                 this.visible = true;
                 const {form: {setFieldsValue}} = this;
                 this.$nextTick(() => {
-                    setFieldsValue({menuName: '', path: '', component: '', perms: '', icon: '', orderNum: '',parentId:''})
+                    setFieldsValue({
+                        menuName: '',
+                        path: '',
+                        component: '',
+                        perms: '',
+                        icon: '',
+                        orderNum: '',
+                        parentId: ''
+                    })
                 });
                 this.reset();
+            },
+            updateMenu(data) {
+                this.menuId = data.menuId;
+                this.visible = true;
+                this.checkedKeys=[];
+                if (this.menuId) {
+                    this.$api.userManager.getRoleMenu(this.menuId).then(res => {
+                        this.checkedKeys = res.data;
+                    });
+                }
+                const {form: {setFieldsValue}} = this;
+                this.$nextTick(() => {
+                    setFieldsValue({menuName: data.menuName, path: data.path,
+                        component: data.component,perms: data.perms,icon: data.icon,orderNum: data.orderNum,parentId:data.parentId})
+                });
             },
             reset() {
                 this.menuTreeKey = +new Date();

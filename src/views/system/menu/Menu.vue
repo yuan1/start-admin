@@ -70,7 +70,7 @@
                     <a-tag v-if="text==='1'" color="pink"> 按钮</a-tag>
                 </template>
                 <template slot="operation" slot-scope="text,record">
-                    <a-icon  type="setting" theme="twoTone" twoToneColor="#4a9ff5" title="修改"  @click="updateMenuClick(record)"></a-icon>
+                    <a-icon  type="setting" theme="twoTone" twoToneColor="#4a9ff5" title="修改"  @click="edit(record)"></a-icon>
                 </template>
             </a-table>
         </div>
@@ -123,7 +123,6 @@
                     ],
                     filterMultiple: false,
                     filteredValue: filters.type || null,
-                    onFilter: (value, record) => record.status.includes(value)
                 }, {
                     title: '地址',
                     dataIndex: 'path'
@@ -181,16 +180,26 @@
             onSelectChange(selectedRowKeys) {
                 this.selectedRowKeys = selectedRowKeys
             },
+            edit(record) {
+                if (record.type === '0') {
+                   this.updateMenuClick(record);
+                } else {
+                    this.updateButton(record);
+                }
+            },
             addMenuClick() {
                 this.$refs.modal.addMenu();
             },
-            updateMenuClick(data) {
-                this.$refs.modal.updateMenu(data);
+            updateMenuClick(record) {
+                this.$refs.modal.updateMenu(record);
             },
             addButtonClick() {
                 this.$refs.model.addButton();
             },
-            deleteClick() {
+            updateButton(record) {
+                this.$refs.model.updateButton(record);
+            },
+            deleteClick(){
                 if (!this.selectedRowKeys.length) {
                     this.$message.warning('请选择需要删除的记录');
                     return
@@ -201,7 +210,8 @@
                     content: '当您点击确定按钮后，这些记录将会被彻底删除，如果其包含子记录，也将一并删除！',
                     centered: true,
                     onOk() {
-                        that.$api.userManager.deleteMenu().then(() => {
+                        console.error('that.selectedRowKeys',that.selectedRowKeys);
+                        that.$api.userManager.deleteMenu(that.selectedRowKeys).then(() => {
                             that.$message.success('删除成功');
                             that.selectedRowKeys = [];
                             that.menuData();

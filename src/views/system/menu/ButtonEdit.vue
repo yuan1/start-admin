@@ -90,6 +90,20 @@
                                 .catch(() => {
                                     this.confirmLoading = false;
                                 });
+                        } else {
+                            this.$api.userManager.updateMenu({
+                                menuName: values.menuName,
+                                parentId: this.parentId,
+                                menuId: this.menuId,
+                                type: this.type,
+                            })
+                                .then(() => {
+                                    this.ok();
+                                    this.$message.success("新增按钮成功");
+                                })
+                                .catch(() => {
+                                    this.confirmLoading = false;
+                                });
                         }
                     }
                 });
@@ -102,13 +116,27 @@
             handleCancel() {
                 this.visible = false;
             },
-            addButton(){
+            addButton() {
                 this.visible = true;
                 const {form: {setFieldsValue}} = this;
                 this.$nextTick(() => {
-                    setFieldsValue({menuName: '',parentId:''})
+                    setFieldsValue({menuName: '', parentId: ''})
                 });
                 this.reset();
+            },
+            updateButton(data) {
+                this.menuId = data.menuId;
+                this.visible = true;
+                this.checkedKeys=[];
+                if (this.menuId) {
+                    this.$api.userManager.getRoleMenu(this.menuId).then(res => {
+                        this.checkedKeys = res.data;
+                    });
+                }
+                const {form: {setFieldsValue}} = this;
+                this.$nextTick(() => {
+                    setFieldsValue({menuName: data.menuName, parentId: data.parentId})
+                });
             },
             reset() {
                 this.menuTreeKey = +new Date();
