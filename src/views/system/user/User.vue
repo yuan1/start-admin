@@ -271,7 +271,7 @@ export default {
         content: '当您点击确定按钮后，这些用户的密码将会重置为1234qwer',
         centered: true,
         onOk() {
-          that.$api.userManager.userPswReset(that.selectedRowKeys).then(() => {
+          that.$api.userManager.userPswReset({ids:that.selectedRowKeys.join(",")}).then(() => {
             that.$message.success("重置用户密码成功");
             that.selectedRowKeys = [];
             that.userData({},that.pagination);

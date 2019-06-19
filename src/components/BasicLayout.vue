@@ -77,7 +77,7 @@
           </div>
         </div>
       </a-layout-header>
-      <a-layout-content :style="{ margin: '0', minHeight: '280px' }">
+      <a-layout-content :style="{ margin: '0', minHeight: '280px', overflowY: 'auto' }">
         <router-view/>
       </a-layout-content>
       <a-layout-footer style="text-align: center">huahuah</a-layout-footer>

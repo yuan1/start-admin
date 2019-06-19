@@ -65,7 +65,8 @@
                     <a-tag v-if="text==='1'" color="pink"> 按钮</a-tag>
                 </template>
                 <template slot="operation" slot-scope="text,record">
-                    <a-icon  type="setting" theme="twoTone" twoToneColor="#4a9ff5" title="修改"  @click="edit(record)"></a-icon>
+                    <a-icon type="setting" theme="twoTone" twoToneColor="#4a9ff5" title="修改"
+                            @click="edit(record)"></a-icon>
                 </template>
             </a-table>
         </div>
@@ -77,6 +78,7 @@
 <script>
     import MenuEdit from "@/views/system/menu/MenuEdit";
     import ButtonEdit from "@/views/system/menu/ButtonEdit";
+
     export default {
         name: "Menu",
         components: {ButtonEdit, MenuEdit},
@@ -87,7 +89,7 @@
                 selectedRowKeys: [],
                 formItemLayout: {
                     labelCol: {span: 5},
-                    wrapperCol:{span: 18, offset: 1},
+                    wrapperCol: {span: 18, offset: 1},
                 },
                 pagination: {
                     defaultPageSize: 10000000,
@@ -101,7 +103,7 @@
         },
         computed: {
             columns() {
-                let { filters } = this;
+                let {filters} = this;
                 filters = filters || {};
                 return [{
                     title: '名称',
@@ -155,9 +157,9 @@
         methods: {
             handleTableChange(pagination, filters) {
                 this.filters = filters;
-                this.menuData(filters,this.searchParams );
+                this.menuData(filters, this.searchParams);
             },
-            menuData(filters = {},searchParams = {}) {
+            menuData(filters = {}, searchParams = {}) {
                 this.loading = true;
                 if (searchParams.createTime && searchParams.createTime.length > 0) {
                     const from = searchParams.createTime[0];
@@ -174,7 +176,11 @@
                     menuName: searchParams.menuName,
                     type: filters.type ? filters.type[0] : null,
                 }).then(res => {
-                    this.data = res.data.rows.children;
+                    if (res.data.rows.children) {
+                        this.data = res.data.rows.children;
+                    } else {
+                        this.data = res.data.rows;
+                    }
                     this.loading = false
                 })
             },
@@ -183,7 +189,7 @@
             },
             edit(record) {
                 if (record.type === '0') {
-                   this.updateMenuClick(record);
+                    this.updateMenuClick(record);
                 } else {
                     this.updateButton(record);
                 }
@@ -200,7 +206,7 @@
             updateButton(record) {
                 this.$refs.model.updateButton(record);
             },
-            deleteClick(){
+            deleteClick() {
                 if (!this.selectedRowKeys.length) {
                     this.$message.warning('请选择需要删除的记录');
                     return
@@ -211,7 +217,7 @@
                     content: '当您点击确定按钮后，这些记录将会被彻底删除，如果其包含子记录，也将一并删除！',
                     centered: true,
                     onOk() {
-                        console.error('that.selectedRowKeys',that.selectedRowKeys);
+                        console.error('that.selectedRowKeys', that.selectedRowKeys);
                         that.$api.userManager.deleteMenu(that.selectedRowKeys).then(() => {
                             that.$message.success('删除成功');
                             that.selectedRowKeys = [];

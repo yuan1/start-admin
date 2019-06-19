@@ -22,13 +22,13 @@ const task = {
         return axios.delete(`${base.api}/job/${jobIds}`)
     },
     runJob(jobId) {
-        return axios.get(`${base.api}job/run${jobId}`)
+        return axios.get(`${base.api}/job/run/${jobId}`)
     },
     pauseJob(jobId) {
-        return axios.get(`${base.api}/job/pause${jobId}`)
+        return axios.get(`${base.api}/job/pause/${jobId}`)
     },
     resumeJob(jobId) {
-        return axios.get(`${base.api}/job/resume${jobId}`)
+        return axios.get(`${base.api}/job/resume/${jobId}`)
     },
 
 };
