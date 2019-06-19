@@ -175,7 +175,6 @@ export default {
       });
     },
     update(data) {
-      console.log(data);
       this.visible = true;
       this.userId = data.userId;
       const {

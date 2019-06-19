@@ -156,6 +156,7 @@
                 this.menuData(filters,this.searchParams );
             },
             menuData(filters = {},searchParams = {}) {
+                this.loading = true;
                 if (searchParams.createTime && searchParams.createTime.length > 0) {
                     const from = searchParams.createTime[0];
                     const to = searchParams.createTime[1];
@@ -172,6 +173,7 @@
                     type: filters.type ? filters.type[0] : null,
                 }).then(res => {
                     this.data = res.data.rows.children;
+                    this.loading = false
                 })
             },
             onSelectChange(selectedRowKeys) {
@@ -189,14 +191,12 @@
             },
             updateMenuClick(record) {
                 this.$refs.modal.updateMenu(record);
-                console.log('11111123dcfccccf',record)
             },
             addButtonClick() {
                 this.$refs.model.addButton();
             },
             updateButton(record) {
                 this.$refs.model.updateButton(record);
-                console.log('3333333',record)
             },
             deleteClick(){
                 if (!this.selectedRowKeys.length) {

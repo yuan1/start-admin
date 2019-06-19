@@ -202,6 +202,7 @@ export default {
       this.selectedRowKeys = selectedRowKeys;
     },
     userData(searchParams = {}, pagination = {}, sorter = {}, filters = {}) {
+      this.loading = true;
       if (searchParams.createTime && searchParams.createTime.length > 0) {
         const from = searchParams.createTime[0];
         const to = searchParams.createTime[1];
@@ -229,7 +230,7 @@ export default {
         .then(res => {
           this.data = res.data.rows;
           this.pagination.total = res.data.total;
-          console.error("res.data", res.data);
+          this.loading = false;
         });
     },
     reset() {

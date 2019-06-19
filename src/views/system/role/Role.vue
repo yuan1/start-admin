@@ -139,6 +139,7 @@
                 this.roleData(pagination, sorter,this.searchParams);
             },
              roleData(pagination = {}, sorter = {},searchParams = {}) {
+                 this.loading = true;
                 if (searchParams.createTime && searchParams.createTime.length > 0) {
                     const from = searchParams.createTime[0];
                     const to = searchParams.createTime[1];
@@ -160,6 +161,7 @@
                 }).then(res => {
                     this.data = res.data.rows;
                     this.pagination.total = res.data.total;
+                    this.loading = false;
                 })
             },
             addClick() {

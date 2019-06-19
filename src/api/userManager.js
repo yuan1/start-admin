@@ -65,6 +65,19 @@ const userManager = {
     deleteMenu(menuIds) {
         return axios.delete(`${base.api}/menu/${menuIds.join(',')}`)
     },
+    /* 字典 */
+    getDict(params) {
+        return axios.get(`${base.api}/dict`,{ params: params })
+    },
+    createDict(data){
+        return axios.post(`${base.api}/dict`, data)
+    },
+    updateDict(data){
+        return axios.put(`${base.api}/dict`, data)
+    } ,
+    deleteDict(dictIds) {
+        return axios.delete(`${base.api}/dict/${dictIds.join(',')}`)
+    },
 
 };
 

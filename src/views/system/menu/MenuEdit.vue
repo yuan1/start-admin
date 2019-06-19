@@ -102,7 +102,7 @@
             handleOk() {
                 this.form.validateFields((err, values) => {
                     if (!err) {
-                        console.error("Received values of form21eee额非常的欣赏: ", values);
+                        console.error("Received values of form: ", values);
                         this.confirmLoading = true;
                         if (this.parentId === undefined || this.parentId === '') {
                             this.parentId = 0;
@@ -130,11 +130,11 @@
                                 menuName: values.menuName,
                                 path: values.path,
                                 component: values.component,
-                                perms: values.permission,
+                                perms: values.perms,
                                 icon: values.icon,
                                 orderNum: values.orderNum,
                                 parentId: this.parentId,
-                                id: this.id,
+                                menuId: this.id,
                                 type: '0',
                             }).then(() => {
                                 this.ok();

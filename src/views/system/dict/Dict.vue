@@ -1,24 +1,41 @@
 <template>
     <a-card :bordered="false">
         <div>
-            <!-- 搜索区域 -->
             <a-form layout="horizontal">
                 <div :class="advanced ? null: 'fold'">
                     <a-row>
-                        <a-col :md="12" :sm="24">
+                        <a-col :md="8" :sm="24">
                             <a-form-item
-                                    label="名称"
+                                    label="键"
                                     :labelCol="{span: 5}"
                                     :wrapperCol="{span: 18, offset: 1}">
-                                <a-input v-model="searchParams.deptName"/>
+                                <a-input v-model="searchParams.keyy"/>
                             </a-form-item>
                         </a-col>
-                        <a-col :md="12" :sm="24">
+                        <a-col :md="8" :sm="24">
                             <a-form-item
-                                    label="创建时间"
+                                    label="值"
                                     :labelCol="{span: 5}"
                                     :wrapperCol="{span: 18, offset: 1}">
-                                <a-range-picker v-model="searchParams.createTime"/>
+                                <a-input v-model="searchParams.valuee"/>
+                            </a-form-item>
+                        </a-col>
+                        <a-col :md="8" :sm="24">
+                            <a-form-item
+                                    label="表名"
+                                    :labelCol="{span: 5}"
+                                    :wrapperCol="{span: 18, offset: 1}">
+                                <a-input v-model="searchParams.tableName"/>
+                            </a-form-item>
+                        </a-col>
+                    </a-row>
+                    <a-row v-if="advanced">
+                        <a-col :md="8" :sm="24">
+                            <a-form-item
+                                    label="字段"
+                                    :labelCol="{span: 5}"
+                                    :wrapperCol="{span: 18, offset: 1}">
+                                <a-input v-model="searchParams.fieldName"/>
                             </a-form-item>
                         </a-col>
                     </a-row>
@@ -26,13 +43,17 @@
                 <span style="float: right; margin-top: 3px;">
           <a-button type="primary" @click="search">查询</a-button>
           <a-button style="margin-left: 8px" @click="reset">重置</a-button>
+          <a @click="toggleAdvanced" style="margin-left: 8px">
+            {{advanced ? '收起' : '展开'}}
+            <a-icon :type="advanced ? 'up' : 'down'"/>
+          </a>
         </span>
             </a-form>
         </div>
         <div>
             <div style="margin-bottom: 18px;">
                 <a-button type="primary" ghost @click="addClick">新增</a-button>
-                <a-button style="margin-left: 8px" @click="deleteClick"> 删除</a-button>
+                <a-button style="margin-left: 8px" @click="deleteClick">删除</a-button>
                 <a-dropdown>
                     <a-menu slot="overlay">
                         <a-menu-item key="export-data">导出Excel</a-menu-item>
@@ -45,101 +66,101 @@
             </div>
             <!-- 表格区域 -->
             <a-table :columns="columns"
-                     rowKey="id"
                      :dataSource="data"
                      :pagination="pagination"
                      :loading="loading"
+                     rowKey="dictId"
                      :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}"
                      @change="handleTableChange" :scroll="{ x: 1500 }">
-                <template slot="operation" slot-scope="text, record">
+                <template slot="remark" slot-scope="text">
+                    <a-popover placement="topLeft">
+                        <template slot="content">
+                            <div style="max-width: 200px">{{text}}</div>
+                        </template>
+                        <p style="width: 200px;margin-bottom: 0">{{text}}</p>
+                    </a-popover>
+                </template>
+                <template slot="operation" slot-scope="text,record">
                     <a-icon type="setting" theme="twoTone" twoToneColor="#4a9ff5"
-                            @click="updateClick(record)" title="修改"></a-icon>
+                            @click="updateClick(record)" title="修改字典"></a-icon>
                 </template>
             </a-table>
         </div>
-        <DeptEdit ref="modal" @ok="handleOk"/>
+
+       <DictEdit ref="modal" @ok="handleOk"/>
     </a-card>
 </template>
-
 <script>
-    import DeptEdit from "@/views/system/dept/DeptEdit";
 
+    import DictEdit from "@/views/system/dict/DictEdit";
     export default {
-        name: "Dept",
-        components: {DeptEdit},
+        name: "Dict",
+        components: {DictEdit},
         data() {
             return {
                 advanced: false,
+                loading: false,
                 data: [],
                 selectedRowKeys: [],
                 pagination: {
-                    defaultPageSize: 10000000,
-                    hideOnSinglePage: true,
-                    indentSize: 100
+                    pageSizeOptions: ["5", "10", "20", "30", "40", "100"],
+                    defaultCurrent: 1,
+                    current: 1,
+                    total: 0,
+                    defaultPageSize: 5,
+                    pageSize: 5,
+                    showSizeChanger: true //是否可以改变 pageSize
                 },
-                loading: false,
+
                 searchParams: {},
                 sorter: {},
             }
         },
         computed: {
             columns() {
-                let {sorter} = this;
-                sorter = sorter || {};
                 return [{
-                    title: '名称',
-                    dataIndex: 'text'
+                    title: '键',
+                    dataIndex: 'keyy'
                 }, {
-                    title: '排序',
-                    dataIndex: 'order'
+                    title: '值',
+                    dataIndex: 'valuee'
                 }, {
-                    title: '创建时间',
-                    dataIndex: 'createTime',
-                    sorter: true,
-                    sortOrder: sorter.columnKey === 'createTime' && sorter.order
+                    title: '表名',
+                    dataIndex: 'tableName'
                 }, {
-                    title: '修改时间',
-                    dataIndex: 'modifyTime',
-                    sorter: true,
-                    sortOrder: sorter.columnKey === 'modifyTime' && sorter.order
+                    title: '字段',
+                    dataIndex: 'fieldName'
                 }, {
                     title: '操作',
                     dataIndex: 'operation',
                     scopedSlots: {customRender: 'operation'},
                     fixed: 'right',
-                    width: 120
+                    width: 100
                 }]
             }
         },
         created() {
-            this.deptData();
+            this.dictData({},this.pagination);
         },
         methods: {
             handleTableChange(pagination, filters, sorter) {
                 this.sorter = sorter;
 
-                this.deptData(sorter, this.searchParams);
+                this.dictData(this.searchParams, pagination);
             },
-            deptData(sorter = {}, searchParams = {}) {
+            dictData(searchParams = {}, pagination = {}) {
                 this.loading = true;
-                if (searchParams.createTime && searchParams.createTime.length > 0) {
-                    const from = searchParams.createTime[0];
-                    const to = searchParams.createTime[1];
-                    searchParams.createTimeFrom = from.format("YYYY-MM-DD");
-                    searchParams.createTimeTo = to.format("YYYY-MM-DD");
-                } else {
-                    searchParams.createTimeFrom = "";
-                    searchParams.createTimeTo = "";
-                }
-                this.$api.userManager.getDept({
-                    createTimeFrom: searchParams.createTimeFrom,
-                    createTimeTo: searchParams.createTimeTo,
-                    deptName: searchParams.deptName,
+                this.$api.userManager.getDict({
+                    keyy: searchParams.keyy,
+                    valuee: searchParams.valuee,
+                    tableName: searchParams.tableName,
+                    fieldName: searchParams.fieldName,
 
-                    sortField: sorter.field,
-                    sortOrder: sorter.order,
+                    pageNum: pagination.current,
+                    pageSize: pagination.pageSize,
                 }).then(res => {
-                    this.data = res.data.rows.children;
+                    this.data = res.data.rows;
+                    this.pagination.total = res.data.total;
                     this.loading = false;
                 })
             },
@@ -151,6 +172,7 @@
             },
             updateClick(data) {
                 this.$refs.modal.update(data);
+                console.error("dict",data)
             },
             deleteClick() {
                 if (!this.selectedRowKeys.length) {
@@ -163,10 +185,10 @@
                     content: "当您点击确定按钮后，这些记录将会被彻底删除",
                     centered: true,
                     onOk() {
-                        that.$api.userManager.deleteDept(that.selectedRowKeys).then(() => {
+                        that.$api.userManager.deleteDict(that.selectedRowKeys).then(() => {
                             that.$message.success("删除成功");
                             that.selectedRowKeys = [];
-                            that.deptData();
+                            that.dictData({},this.pagination);
                         });
                     },
                     onCancel() {
@@ -175,15 +197,18 @@
                 });
             },
             reset() {
-                this.sorter = {};
                 this.searchParams = {};
-                this.deptData();
+                this.pagination.current = 1;
+                this.dictData({},this.pagination);
             },
             search() {
-                this.deptData(this.sorter, this.searchParams,);
+                this.dictData(this.searchParams, this.pagination,);
+            },
+            toggleAdvanced() {
+                this.advanced = !this.advanced;
             },
             handleOk() {
-                this.deptData();
+                this.dictData({},this.pagination);
             },
         }
     }
