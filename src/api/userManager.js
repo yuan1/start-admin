@@ -22,6 +22,9 @@ const userManager = {
     deleteUser(userIds) {
         return axios.delete(`${base.api}/user/${userIds.join(',')}`)
     },
+    userPswReset(ids) {
+        return axios.get(`${base.api}/user/password/reset${ids.join(',')}`)
+    },
     /* 角色 */
     getRole(params) {
         return axios.get(`${base.api}/role`,{ params: params })

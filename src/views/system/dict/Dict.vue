@@ -2,29 +2,26 @@
     <a-card :bordered="false">
         <div>
             <a-form layout="horizontal">
-                <div :class="advanced ? null: 'fold'">
+                <div style="width: calc(100% - 216px);display: inline-block;">
                     <a-row>
                         <a-col :md="8" :sm="24">
                             <a-form-item
                                     label="键"
-                                    :labelCol="{span: 5}"
-                                    :wrapperCol="{span: 18, offset: 1}">
+                                    v-bind="formItemLayout">
                                 <a-input v-model="searchParams.keyy"/>
                             </a-form-item>
                         </a-col>
                         <a-col :md="8" :sm="24">
                             <a-form-item
                                     label="值"
-                                    :labelCol="{span: 5}"
-                                    :wrapperCol="{span: 18, offset: 1}">
+                                    v-bind="formItemLayout">
                                 <a-input v-model="searchParams.valuee"/>
                             </a-form-item>
                         </a-col>
                         <a-col :md="8" :sm="24">
                             <a-form-item
                                     label="表名"
-                                    :labelCol="{span: 5}"
-                                    :wrapperCol="{span: 18, offset: 1}">
+                                    v-bind="formItemLayout">
                                 <a-input v-model="searchParams.tableName"/>
                             </a-form-item>
                         </a-col>
@@ -33,8 +30,7 @@
                         <a-col :md="8" :sm="24">
                             <a-form-item
                                     label="字段"
-                                    :labelCol="{span: 5}"
-                                    :wrapperCol="{span: 18, offset: 1}">
+                                    v-bind="formItemLayout">
                                 <a-input v-model="searchParams.fieldName"/>
                             </a-form-item>
                         </a-col>
@@ -102,6 +98,10 @@
                 loading: false,
                 data: [],
                 selectedRowKeys: [],
+                formItemLayout: {
+                    labelCol: {span: 5},
+                    wrapperCol:{span: 18, offset: 1},
+                },
                 pagination: {
                     pageSizeOptions: ["5", "10", "20", "30", "40", "100"],
                     defaultCurrent: 1,
@@ -113,7 +113,6 @@
                 },
 
                 searchParams: {},
-                sorter: {},
             }
         },
         computed: {
@@ -143,8 +142,8 @@
             this.dictData({},this.pagination);
         },
         methods: {
-            handleTableChange(pagination, filters, sorter) {
-                this.sorter = sorter;
+            handleTableChange(pagination) {
+                this.pagination = pagination;
 
                 this.dictData(this.searchParams, pagination);
             },
@@ -172,7 +171,6 @@
             },
             updateClick(data) {
                 this.$refs.modal.update(data);
-                console.error("dict",data)
             },
             deleteClick() {
                 if (!this.selectedRowKeys.length) {

@@ -3,14 +3,14 @@
     <div>
       <a-form ayout="horizontal">
         <a-row>
-          <div :class="advanced ? null: 'fold'">
+          <div style="width: calc(100% - 216px);display: inline-block;">
             <a-col :md="12" :sm="24">
-              <a-form-item label="用户名" :labelCol="{span: 4}" :wrapperCol="{span: 18, offset: 2}">
+              <a-form-item label="用户名" v-bind="formItemLayout">
                 <a-input v-model="searchParams.username"/>
               </a-form-item>
             </a-col>
             <a-col :md="12" :sm="24">
-              <a-form-item label="部门" :labelCol="{span: 4}" :wrapperCol="{span: 18, offset: 2}">
+              <a-form-item label="部门" v-bind="formItemLayout">
                 <a-tree-select
                   :dropdownStyle="{ maxHeight: '220px', overflow: 'auto' }"
                   :treeData="deptData"
@@ -20,7 +20,7 @@
             </a-col>
             <template v-if="advanced">
               <a-col :md="12" :sm="24">
-                <a-form-item label="创建时间" :labelCol="{span: 4}" :wrapperCol="{span: 18, offset: 2}">
+                <a-form-item label="创建时间" v-bind="formItemLayout">
                   <a-range-picker v-model="searchParams.createTime"/>
                 </a-form-item>
               </a-col>
@@ -43,11 +43,9 @@
         <a-button style="margin-left: 8px" @click="deleteClick">删除</a-button>
         <a-dropdown>
           <a-menu slot="overlay">
-            <a-menu-item key="1">
-              <a-icon type="user"/>密码重置
+            <a-menu-item key="password-reset" @click="resetPassword">密码重置
             </a-menu-item>
-            <a-menu-item key="2">
-              <a-icon type="user"/>导出Excel
+            <a-menu-item key="export-data">导出Excel
             </a-menu-item>
           </a-menu>
           <a-button style="margin-left: 8px" type="primary" ghost>
@@ -98,6 +96,10 @@ export default {
       formLayout: "horizontal",
       advanced: false,
       loading: false,
+      formItemLayout: {
+        labelCol: {span: 4},
+        wrapperCol:{span: 18, offset: 2},
+      },
       pagination: {
         pageSizeOptions: ["5", "10", "20", "30", "40", "100"],
         defaultCurrent: 1,
@@ -258,12 +260,27 @@ export default {
     updateClick(data) {
       this.$refs.modal.update(data);
     },
-    resetPWD(){
+    resetPassword() {
       if (!this.selectedRowKeys.length) {
-        this.$message.warning("请选择需要重置的记录");
+        this.$message.warning('请选择需要重置密码的用户');
         return;
       }
-
+      let that = this;
+      this.$confirm({
+        title: '确定重置选中用户密码?',
+        content: '当您点击确定按钮后，这些用户的密码将会重置为1234qwer',
+        centered: true,
+        onOk() {
+          that.$api.userManager.userPswReset(that.selectedRowKeys).then(() => {
+            that.$message.success("重置用户密码成功");
+            that.selectedRowKeys = [];
+            that.userData({},that.pagination);
+          });
+        },
+        onCancel() {
+          that.selectedRowKeys = []
+        }
+      })
     },
     deleteClick() {
       if (!this.selectedRowKeys.length) {

@@ -3,21 +3,19 @@
         <div>
             <!-- 搜索区域 -->
             <a-form layout="horizontal">
-                <div>
+                <div style="width: calc(100% - 216px);display: inline-block;">
                     <a-row>
                         <a-col :md="12" :sm="24">
                             <a-form-item
                                     label="名称"
-                                    :labelCol="{span: 5}"
-                                    :wrapperCol="{span: 18, offset: 1}">
+                                    v-bind="formItemLayout">
                                 <a-input v-model="searchParams.menuName"/>
                             </a-form-item>
                         </a-col>
                         <a-col :md="12" :sm="24">
                             <a-form-item
                                     label="创建时间"
-                                    :labelCol="{span: 5}"
-                                    :wrapperCol="{span: 18, offset: 1}">
+                                    v-bind="formItemLayout">
                                 <a-range-picker v-model="searchParams.createTime"/>
                             </a-form-item>
                         </a-col>
@@ -87,6 +85,10 @@
                 advanced: false,
                 data: [],
                 selectedRowKeys: [],
+                formItemLayout: {
+                    labelCol: {span: 5},
+                    wrapperCol:{span: 18, offset: 1},
+                },
                 pagination: {
                     defaultPageSize: 10000000,
                     hideOnSinglePage: true,
