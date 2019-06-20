@@ -14,7 +14,22 @@ const user = {
     },
     menuData(username) {
         return axios.get(`${base.api}/menu/${username}`)
-    }
+    },
+    updateAvatar(data) {
+        return axios.put(`${base.api}/user/avatar`, data)
+    },
+    updateProfile(data) {
+        return axios.put(`${base.api}/user/profile`, data)
+    },
+    updatePassword(data) {
+        return axios.put(`${base.api}/user/password`, data)
+    },
+    checkPassword(params) {
+        return axios.get(`${base.api}/user/password/check`, { params: params })
+    },
+    userXx() {
+        return axios.get(`${base.api}/user/${user.username}`,)
+    },
 
 };
 

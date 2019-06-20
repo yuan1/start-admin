@@ -52,20 +52,18 @@
                     class="avatar"
                     size="small"
                     style="margin-right: 12px"
-                    src="https://axure-file.lanhuapp.com/6b1d2547-b791-4d62-adce-a4881352a46d__862eb7a7eeb6b7490153498e634cb182"
+                    :src="avatar"
                   />
                   {{$store.state.user.username}}
                 </a>
                 <a-menu slot="overlay">
                   <a-menu-item key="0" @click="setClick">
                     <a href="#">
-                      <a-icon type="home"/>个人中心
+                      <a-icon type="user"/>个人中心
                     </a>
                   </a-menu-item>
                   <a-menu-item key="1" @click="changePwd">
-                    <a href="#">
-                      <a-icon type="setting"/>账号设置
-                    </a>
+                      <a-icon type="key"/>密码修改
                   </a-menu-item>
                   <a-menu-divider/>
                   <a-menu-item key="3" @click="exitLayout">
@@ -82,16 +80,25 @@
       </a-layout-content>
       <a-layout-footer style="text-align: center">huahuah</a-layout-footer>
     </a-layout>
+    <update-password
+            @success="handleUpdate"
+            @cancel="handleCancelUpdate"
+            :user="user"
+            :visible="visible">
+    </update-password>
   </a-layout>
+
 </template>
 <script>
-import router from "@/router";
+import UpdatePassword from "@/views/personal/UpdatePassword";
 
 export default {
+  components: {UpdatePassword},
   data() {
     return {
       collapsed: false,
-      menuData: []
+      menuData: [],
+      visible: false,
     };
   },
   created() {
@@ -106,17 +113,31 @@ export default {
         } else return meta.isShow;
       });
     console.log(this.menuData);
+
   },
   methods: {
+    avatar() {
+      return `static/avatar/${this.user.avatar}`
+    },
     exitLayout() {
       this.$store.commit("logout");
       location.reload();
     },
     changePwd() {
-      router.push("/info");
+      this.visible = true;
+    },
+    handleCancelUpdate() {
+      this.visible = false
+    },
+    handleUpdate() {
+      this.visible = false;
+      this.$message.success('更新密码成功，请重新登录系统');
+      setTimeout(() => {
+        this.exitLayout()
+      }, 1500)
     },
     setClick() {
-      router.push("/setting");
+      this.$router.push('/profile')
     }
   }
 };
