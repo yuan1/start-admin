@@ -5,7 +5,7 @@ export const hasPermission = {
     install(Vue) {
         Vue.directive('hasPermission', {
             bind(el, binding, vnode) {
-                let permissions = vnode.context.$store.state.account.permissions;
+                let permissions = vnode.context.$store.state.permissions;
                 let value = binding.value.split(',');
                 let flag = true;
                 for (let v of value) {
@@ -30,7 +30,7 @@ export const hasNoPermission = {
     install(Vue) {
         Vue.directive('hasNoPermission', {
             bind(el, binding, vnode) {
-                let permissions = vnode.context.$store.state.account.permissions;
+                let permissions = vnode.context.$store.state.permissions;
                 let value = binding.value.split(',');
                 let flag = true;
                 for (let v of value) {
@@ -55,7 +55,7 @@ export const hasAnyPermission = {
     install(Vue) {
         Vue.directive('hasAnyPermission', {
             bind(el, binding, vnode) {
-                let permissions = vnode.context.$store.state.account.permissions;
+                let permissions = vnode.context.$store.state.permissions;
                 let value = binding.value.split(',');
                 let flag = false;
                 for (let v of value) {
@@ -80,7 +80,7 @@ export const hasRole = {
     install(Vue) {
         Vue.directive('hasRole', {
             bind(el, binding, vnode) {
-                let permissions = vnode.context.$store.state.account.roles;
+                let permissions = vnode.context.$store.state.roles;
                 let value = binding.value.split(',');
                 let flag = true;
                 for (let v of value) {
@@ -105,7 +105,7 @@ export const hasAnyRole = {
     install(Vue) {
         Vue.directive('hasAnyRole', {
             bind(el, binding, vnode) {
-                let permissions = vnode.context.$store.state.account.roles;
+                let permissions = vnode.context.$store.state.roles;
                 let value = binding.value.split(',');
                 let flag = false;
                 for (let v of value) {
