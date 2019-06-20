@@ -2,10 +2,11 @@
  * 请求拦截、相应拦截、错误统一处理
  */
 import axios from 'axios';
-import {notification} from 'ant-design-vue';
-import store from '../store'
+import {notification, Modal} from 'ant-design-vue';
+import store from '../store';
+import router from '../router'
 
-
+let isErrorLoginConfirm=false;
 /**
  * 请求失败后的错误统一处理
  * @param {Number} status 请求失败的状态码
@@ -22,11 +23,28 @@ const errorHandle = (status, other) => {
             });
             break;
         case 403:
-        case 401:
             notification.warn({
                 message: '系统提示',
                 description: '很抱歉，您无法访问该资源，可能是因为没有相应权限或者登录已失效',
                 duration: 4
+            });
+            break;
+        case 401:
+            if(isErrorLoginConfirm){
+                break;
+            }
+            isErrorLoginConfirm=true;
+            Modal.confirm({
+                title: '登录失效！',
+                content: '请重新登录!!!',
+                onOk() {
+                    isErrorLoginConfirm=false;
+                    router.push('/session/login')
+                },
+                onCancel() {
+                    isErrorLoginConfirm=false;
+                    router.push('/session/login')
+                },
             });
             break;
         default:

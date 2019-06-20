@@ -23,37 +23,25 @@
             </a-row>
         </a-card>
         <update-avatar
-                @cancel="handleUpdateAvatarCancel"
-                @success="handleUpdateAvatarSuccess"
-                :user="user"
-                :visible="visible">
+                ref="updateAvatar"
+                :user="user">
         </update-avatar>
         <update-profile
                 ref="updateProfile"
-                @success="handleProfileEditSuccess"
-                @close="handleProfileEditClose"
-                :profileEditVisiable="profileEditVisiable">
+                :user="user">
         </update-profile>
     </div>
 </template>
 <script>
-    import {mapState, mapMutations} from 'vuex'
+    import {mapState} from 'vuex'
     import UpdateAvatar from './UpdateAvatar'
     import UpdateProfile from './UpdateProfile'
 
     export default {
         name: 'Profile',
         components: {UpdateAvatar,UpdateProfile},
-        data() {
-            return {
-                visible: false,
-                profileEditVisiable: false,
-                userId: ''
-            }
-        },
         computed: {
             ...mapState({
-                // multipage: state => state.setting.multipage,
                 user: state => state.user
             }),
             avatar() {
@@ -73,34 +61,12 @@
             }
         },
         methods: {
-            ...mapMutations({
-                setUser: state => state.setUser
-            }),
-            handleUpdateAvatarCancel() {
-                this.visible = false
-            },
-            handleUpdateAvatarSuccess(avatar) {
-                this.visible = false;
-                this.$message.success('更换头像成功');
-                let user = this.user;
-                user.avatar = avatar;
-                this.setUser(user)
-            },
             updateAvatar() {
-                this.visible = true;
-                this.userId = this.user.userId
+                this.$refs.updateAvatar.visible=true;
             },
             updateProfile() {
-                this.$refs.updateProfile.setFormValues(this.user);
-                this.profileEditVisiable = true
+                this.$refs.updateProfile.visible=true;
             },
-            handleProfileEditClose() {
-                this.profileEditVisiable = false
-            },
-            handleProfileEditSuccess() {
-                this.profileEditVisiable = false;
-                this.$message.success('修改成功')
-            }
         }
     }
 </script>

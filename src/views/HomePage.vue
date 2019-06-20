@@ -3,10 +3,10 @@
         <div class="home">
             <a-row type="flex" justify="space-around">
                 <a-col :span="4">
-                    <a-avatar :size="64" icon="user"/>
+                    <a-avatar :size="64" :src="avatar"/>
                 </a-col>
                 <a-col :span="12" :pull="4">
-                    <p>下午好，Ant Design，祝你开心每一天！</p>
+                    <p>下午好，{{user.username}}，祝你开心每一天！</p>
                     <p>交互设计师 | 蚂蚁金服－平台数据技术事业群－基础平台部－用户体验技术部－UED</p>
                 </a-col>
                 <a-col>
@@ -226,12 +226,17 @@
 </template>
 
 <script>
+    import {mapState} from "vuex";
+
     export default {
         name: 'home',
-        created() {
-            this.$notification.open({
-                message: '欢迎' + this.$store.state.user.username,
-            });
+        computed: {
+            ...mapState({
+                user: state => state.user
+            }),
+            avatar() {
+                return `static/avatar/${this.user.avatar}`
+            },
         },
         methods: {}
     }

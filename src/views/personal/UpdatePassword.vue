@@ -1,5 +1,4 @@
 <template>
-    <div>
         <!-- 密码修改 -->
         <a-modal
                 title="密码修改"
@@ -10,14 +9,11 @@
                 @cancel="handleCancel"
                 @ok="handleOk">
             <a-form :form="form">
-                <a-form-item
-                        label='旧密码'
-                        v-bind="formItemLayout"
-                        v-decorator="[
+                <a-form-item label='旧密码' v-bind="formItemLayout">
+                    <a-input type="password" v-decorator="[
           'oldPassword',
-          {rules: [{ required: true, message: '请输入旧密码'}, { validator: this.handleOldPassowrd }], validateTrigger: ['blur']}
-        ]">
-                    <a-input type="password"
+          {rules: [{ required: true, message: '请输入旧密码'}, { validator: this.handleOldPassword }], validateTrigger: ['blur']}
+        ]"
                              autocomplete="false"
                              placeholder="请输入旧密码"></a-input>
                 </a-form-item>
@@ -34,33 +30,32 @@
                     </template>
                     <a-form-item
                             label='新密码'
-                            v-bind="formItemLayout"
-                            v-decorator="[
+                            v-bind="formItemLayout">
+                        <a-input type="password"
+                                 v-decorator="[
           'password',
           {rules: [{ required: true, message: '至少6位密码，区分大小写'}, { validator: this.handlePasswordLevel }], validateTrigger: ['change', 'blur']}
-        ]">
-                        <a-input type="password"
+        ]"
                                  @click="handlePasswordInputClick"
-                                 v-model="newPassword"
                                  autocomplete="false"
                                  placeholder="至少6位密码，区分大小写"></a-input>
                     </a-form-item>
                 </a-popover>
                 <a-form-item
                         label='再次确认'
-                        v-bind="formItemLayout"
-                        v-decorator="[
+                        v-bind="formItemLayout">
+                    <a-input  v-decorator="[
           'password2',
           {rules: [{ required: true, message: '至少6位密码，区分大小写'}, { validator: this.handlePasswordCheck }], validateTrigger: ['change', 'blur']}
-        ]">
-                    <a-input type="password" autocomplete="false" placeholder="确认密码"></a-input>
+        ]" type="password" autocomplete="false" placeholder="确认密码"></a-input>
                 </a-form-item>
             </a-form>
         </a-modal>
-    </div>
 </template>
 
 <script>
+    import {mapState} from "vuex";
+
     const levelNames = {
         0: '低',
         1: '低',
@@ -81,14 +76,6 @@
     };
 
     export default {
-        props: {
-            visible: {
-                default: false
-            },
-            user: {
-                required: true
-            }
-        },
         data() {
             return {
                 form: this.$form.createForm(this),
@@ -102,13 +89,13 @@
                     percent: 10,
                     progressColor: '#FF0000'
                 },
-                oldPassword: '',
-                newPassword: '',
-                validateStatus: '',
-                help: ''
+                visible:false
             }
         },
         computed: {
+            ...mapState({
+                user: state => state.user
+            }),
             passwordLevelClass() {
                 return levelClass[this.state.passwordLevel]
             },
@@ -120,12 +107,13 @@
             }
         },
         methods: {
-            // isMobile() {
-            //     return this.$store.state.setting.isMobile
-            // },
+            show(){
+                this.visible=true;
+            },
             handleCancel() {
                 this.state.passwordLevelChecked = false;
                 this.form.resetFields();
+                this.visible=false;
                 this.$emit('cancel')
             },
             handleOk() {
@@ -133,7 +121,7 @@
                     console.log(values);
                     if (!err) {
                         this.$api.user.updatePassword({
-                            password: this.newPassword,
+                            password: values.password,
                             username: this.user.username,
                         }).then(() => {
                             this.state.passwordLevelChecked = false;
@@ -182,17 +170,12 @@
                 callback()
             },
             handlePasswordInputClick() {
-                // if (!this.isMobile()) {
-                //     this.state.passwordLevelChecked = true;
-                //     return
-                // }
                 this.state.passwordLevelChecked = false
             },
-            handleOldPassowrd(rule, value, callback) {
-                let password = this.oldPassword;
-                if (this.oldPassword.trim().length) {
+            handleOldPassword(rule, value, callback) {
+                if (value.trim().length) {
                     this.$api.user.checkPassword({
-                        password: password,
+                        password: value,
                         username: this.user.username
                     }).then((r) => {
                         if (r.data) {

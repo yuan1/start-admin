@@ -7,7 +7,7 @@
             :closable="false"
             @cancel="handleCancel"
             @ok="handleOk"
-            :visible="profileEditVisiable">
+            :visible="visible">
         <a-form :form="form">
             <a-form-item label='邮箱' v-bind="formItemLayout">
                 <a-input
@@ -59,16 +59,17 @@
     </a-modal>
 </template>
 <script>
-    import {mapState, mapMutations} from 'vuex'
+    import {mapMutations} from 'vuex'
 
     export default {
         props: {
-            profileEditVisiable: {
-                default: false
+            user: {
+                required: true
             }
         },
         data() {
             return {
+                visible:false,
                 formItemLayout: {
                     labelCol: {span: 3},
                     wrapperCol: {span: 18}
@@ -83,56 +84,32 @@
                 loading: false
             }
         },
-        computed: {
-            ...mapState({
-                currentUser: state => state.user
-            })
-        },
         methods: {
             ...mapMutations({
                 setUser: state => state.setUser
             }),
-            setFormValues({...user}) {
-                this.userId = user.userId;
-                let fields = ['email', 'ssex', 'description', 'mobile'];
-                Object.keys(user).forEach((key) => {
-                    if (fields.indexOf(key) !== -1) {
-                        this.form.getFieldDecorator(key);
-                        let obj = {};
-                        obj[key] = user[key];
-                        this.form.setFieldsValue(obj)
-                    }
-                });
-                if (user.deptId) {
-                    this.userDept = [user.deptId]
-                }
-                this.status = user.status;
-                this.roleId = user.roleId;
-                this.username = user.username
-            },
             onDeptChange(value) {
                 this.userDept = value
             },
-
             handleCancel() {
-                this.profileEditVisiable = false;
+                this.visible = false;
             },
             handleOk() {
-                this.form.validateFields((err, values) => {
+                this.form.validateFields((err,values) => {
                     if (!err) {
                         this.loading = true;
-                        let user = this.form.getFieldsValue();
-                        user.userId = this.userId;
-                        user.deptId = this.userDept;
-                        user.roleId = this.roleId;
-                        user.status = this.status;
-                        user.username = this.username;
-                        this.$api.user.updateProfile({}).then((r) => {
+                        this.user.deptId = this.userDept[0];
+                        this.user.email= values.email;
+                        this.user.ssex= values.ssex;
+                        this.user.description= values.description;
+                        this.user.mobile= values.mobile;
+                        this.$api.user.updateProfile(this.user).then(() => {
                             this.loading = false;
-                            this.$emit('success');
                             // 更新其state
-                            this.$api.user.userXx().then((r) => {
-                                this.setUser(r.data)
+                            this.$api.user.userXx(this.user).then((r) => {
+                                this.setUser(r.data);
+                                this.$message.success('修改成功');
+                                this.visible = false;
                             })
                         }).catch(() => {
                             this.loading = false
@@ -142,11 +119,24 @@
             }
         },
         watch: {
-            profileEditVisiable() {
-                if (this.profileEditVisiable) {
+            visible() {
+                if (this.visible) {
                     this.$api.userManager.getDept().then((r) => {
                         this.deptTreeData = r.data.rows.children
-                    })
+                    });
+                    if (this.user.deptId) {
+                        this.userDept = [this.user.deptId]
+                    }
+                    console.log(this.user);
+                    const {form: {setFieldsValue}} = this;
+                    this.$nextTick(() => {
+                        setFieldsValue({
+                            email: this.user.email,
+                            ssex: this.user.ssex,
+                            description: this.user.description,
+                            mobile: this.user.mobile,
+                        })
+                    });
                 }
             }
         }

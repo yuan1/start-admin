@@ -76,7 +76,7 @@
             v-hasPermission="'user:update'"
             @click="updateClick(record)"
           ></a-icon>
-          <a-badge v-hasNoPermission="`user:update`" status="warning" text="无权限"></a-badge>
+          <a-badge v-hasNoPermission="'user:update'" status="warning" text="无权限"></a-badge>
         </template>
       </a-table>
     </div>

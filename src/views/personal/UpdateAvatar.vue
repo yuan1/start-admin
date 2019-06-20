@@ -51,9 +51,6 @@
         '20180414165942.jpg', '20180414165947.jpg', '20180414165955.jpg'];
     export default {
         props: {
-            visible: {
-                default: false
-            },
             user: {
                 required: true
             }
@@ -64,10 +61,10 @@
                 al,
                 lm,
                 updating: false,
+                visible: false,
 
             }
         },
-        computed: {},
         methods: {
             handleCancel() {
                 this.$emit('cancel')
@@ -83,7 +80,12 @@
                     avatar
                 }).then(() => {
                     this.$emit('success', avatar);
-                    this.updating = false
+                    this.$message.success('更换头像成功');
+                    this.user.avatar = avatar;
+                    this.$store.commit('setUser', this.user);
+                    this.updating = false;
+                    this.visible=false
+
                 }).catch((r) => {
                     console.error(r);
                     this.$message.error('更新头像失败');

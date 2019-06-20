@@ -21,7 +21,7 @@
               <router-link :to="child.path">{{child.name}}</router-link>
             </a-menu-item>
           </a-sub-menu>
-          <a-menu-item v-else :key="'menu_'+index+'_'+menu.icon" @click="router.push(menu.path)">
+          <a-menu-item v-else :key="'menu_'+index+'_'+menu.icon" @click="$router.push(menu.path)">
             <a-icon :type="menu.icon"/>
             <span>{{menu.name}}</span>
           </a-menu-item>
@@ -44,7 +44,7 @@
                     style="margin-right: 12px"
                     :src="avatar"
                   />
-                  {{$store.state.user.username}}
+                  {{user.username}}
                 </a>
                 <a-menu slot="overlay">
                   <a-menu-item key="0" @click="setClick">
@@ -68,17 +68,13 @@
       </a-layout-content>
       <a-layout-footer style="text-align: center">huahuah</a-layout-footer>
     </a-layout>
-    <update-password
-            @success="handleUpdate"
-            @cancel="handleCancelUpdate"
-            :user="user"
-            :visible="visible">
-    </update-password>
+    <update-password ref="pwdModal"/>
   </a-layout>
 
 </template>
 <script>
 import UpdatePassword from "@/views/personal/UpdatePassword";
+import {mapState} from "vuex";
 
 export default {
   components: {UpdatePassword},
@@ -103,26 +99,21 @@ export default {
     console.log(this.menuData);
 
   },
-  methods: {
+  computed: {
+    ...mapState({
+      user: state => state.user
+    }),
     avatar() {
       return `static/avatar/${this.user.avatar}`
     },
+  },
+  methods: {
     exitLayout() {
       this.$store.commit("logout");
       location.reload();
     },
-    changePwd() {
-      this.visible = true;
-    },
-    handleCancelUpdate() {
-      this.visible = false
-    },
-    handleUpdate() {
-      this.visible = false;
-      this.$message.success('更新密码成功，请重新登录系统');
-      setTimeout(() => {
-        this.exitLayout()
-      }, 1500)
+    changePwd(){
+      this.$refs.pwdModal.show();
     },
     setClick() {
       this.$router.push('/profile')

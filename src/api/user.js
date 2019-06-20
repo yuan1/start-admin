@@ -27,8 +27,8 @@ const user = {
     checkPassword(params) {
         return axios.get(`${base.api}/user/password/check`, { params: params })
     },
-    userXx() {
-        return axios.get(`${base.api}/user/${user.username}`,)
+    userXx(data) {
+        return axios.get(`${base.api}/user/${data.username}`)
     },
 
 };
