@@ -30,22 +30,12 @@
     </a-layout-sider>
     <a-layout>
       <a-layout-header style="background: #fff; padding: 0">
-        <div>
-          <div>
             <a-icon
               class="trigger"
               :type="collapsed ? 'menu-unfold' : 'menu-fold'"
               @click="()=> collapsed = !collapsed"
             />
             <div style="float: right;margin: 0 10px">
-              <a href="https://www.baidu.com/">
-                <span class="action">
-                  <a-icon type="question-circle-o"/>
-                </span>
-              </a>
-              <span class="action">
-                <a-icon type="bell"/>
-              </span>
               <a-dropdown>
                 <a class="action" href="#">
                   <a-avatar
@@ -71,8 +61,6 @@
                   </a-menu-item>
                 </a-menu>
               </a-dropdown>
-            </div>
-          </div>
         </div>
       </a-layout-header>
       <a-layout-content :style="{ margin: '0', minHeight: '280px', overflowY: 'auto' }">

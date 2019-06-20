@@ -39,13 +39,13 @@
     </div>
     <div>
       <div style="margin-bottom: 18px;">
-        <a-button type="primary" ghost @click="addClick">新增</a-button>
-        <a-button style="margin-left: 8px" @click="deleteClick">删除</a-button>
+        <a-button type="primary" ghost v-hasPermission="'user:add'" @click="addClick">新增</a-button>
+        <a-button style="margin-left: 8px" v-hasPermission="'user:delete'" @click="deleteClick">删除</a-button>
         <a-dropdown>
-          <a-menu slot="overlay">
-            <a-menu-item key="password-reset" @click="resetPassword">密码重置
+          <a-menu slot="overlay" v-hasAnyPermission="`user:reset,user:export`">
+            <a-menu-item  v-hasPermission="'user:reset'" key="password-reset" @click="resetPassword">密码重置
             </a-menu-item>
-            <a-menu-item key="export-data">导出Excel
+            <a-menu-item  v-hasPermission="'user:export'" key="export-data">导出Excel
             </a-menu-item>
           </a-menu>
           <a-button style="margin-left: 8px" type="primary" ghost>
@@ -73,8 +73,10 @@
             theme="twoTone"
             twoToneColor="#4a9ff5"
             title="修改用户"
+            v-hasPermission="'user:update'"
             @click="updateClick(record)"
           ></a-icon>
+          <a-badge v-hasNoPermission="`user:update`" status="warning" text="无权限"></a-badge>
         </template>
       </a-table>
     </div>
