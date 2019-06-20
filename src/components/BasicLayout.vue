@@ -64,6 +64,14 @@
         </div>
       </a-layout-header>
       <a-layout-content :style="{ margin: '0', minHeight: '280px', overflowY: 'auto' }">
+        <div class="breadcrumb">
+          <a-breadcrumb>
+            <a-breadcrumb-item :key="item.path" v-for="(item, index) in breadcrumb">
+              <span v-if="index === 0"><router-link to="/">{{item.name}}</router-link></span>
+              <span v-else>{{item.name}}</span>
+            </a-breadcrumb-item>
+          </a-breadcrumb>
+        </div>
         <router-view/>
       </a-layout-content>
       <a-layout-footer style="text-align: center">huahuah</a-layout-footer>
@@ -82,6 +90,7 @@ export default {
     return {
       collapsed: false,
       menuData: [],
+      breadcrumb: [],
       visible: false,
     };
   },
@@ -107,7 +116,16 @@ export default {
       return `static/avatar/${this.user.avatar}`
     },
   },
+  mounted() {
+    this.getBreadcrumb()
+  },
+  updated() {
+    this.getBreadcrumb()
+  },
   methods: {
+    getBreadcrumb() {
+      this.breadcrumb = this.$route.matched
+    },
     exitLayout() {
       this.$store.commit("logout");
       location.reload();

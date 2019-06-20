@@ -1,5 +1,5 @@
 <template>
-    <div style="min-height: 280px;background: #fff;margin: 10px 20px">
+    <div style="min-height: 280px;background: #fff">
         <router-view/>
     </div>
 </template>

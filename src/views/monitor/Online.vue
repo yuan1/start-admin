@@ -1,5 +1,5 @@
 <template>
-    <a-card>
+    <a-card :bordered="false">
         <div>
             <!-- 搜索区域 -->
             <a-form layout="horizontal">

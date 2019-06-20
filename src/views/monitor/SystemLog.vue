@@ -1,5 +1,5 @@
 <template>
-    <a-card>
+    <a-card :bordered="false">
         <a-form layout="horizontal">
             <div style="width: calc(100% - 216px);display: inline-block;">
                 <a-row>
