@@ -1,6 +1,6 @@
 <template>
     <div>
-        <a-card>
+        <a-card :bordered="false">
             <a href="javascript:void(0)" slot="extra" @click="updateProfile">编辑资料</a>
             <a-row :gutter="8">
                 <a-col :span="6">

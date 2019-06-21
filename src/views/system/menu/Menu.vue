@@ -36,10 +36,10 @@
                         @cancel="() => addMenuClick()"
                         @confirm="() => addButtonClick()">
                     <a-icon slot="icon" type="question-circle-o" style="color: orangered"/>
-                    <a-button type="primary" ghost>新增</a-button>
+                    <a-button type="primary" v-hasPermission="'menu:add'" ghost>新增</a-button>
                 </a-popconfirm>
-                <a-button style="margin-left: 8px" @click="deleteClick"> 删除</a-button>
-                <a-dropdown>
+                <a-button style="margin-left: 8px" v-hasPermission="'menu:delete'" @click="deleteClick"> 删除</a-button>
+                <a-dropdown v-hasPermission="'menu:export'">
                     <a-menu slot="overlay">
                         <a-menu-item key="export-data">导出Excel</a-menu-item>
                     </a-menu>
@@ -65,8 +65,9 @@
                     <a-tag v-if="text==='1'" color="pink"> 按钮</a-tag>
                 </template>
                 <template slot="operation" slot-scope="text,record">
-                    <a-icon type="setting" theme="twoTone" twoToneColor="#4a9ff5" title="修改"
+                    <a-icon v-hasPermission="'menu:update'" type="setting" theme="twoTone" twoToneColor="#4a9ff5" title="修改"
                             @click="edit(record)"></a-icon>
+                    <a-badge v-hasNoPermission="'menu:update'" status="warning" text="无权限"></a-badge>
                 </template>
             </a-table>
         </div>

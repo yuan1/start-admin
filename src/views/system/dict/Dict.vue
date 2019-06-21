@@ -48,9 +48,9 @@
         </div>
         <div>
             <div style="margin-bottom: 18px;">
-                <a-button type="primary" ghost @click="addClick">新增</a-button>
-                <a-button style="margin-left: 8px" @click="deleteClick">删除</a-button>
-                <a-dropdown>
+                <a-button v-hasPermission="'dict:add'" type="primary" ghost @click="addClick">新增</a-button>
+                <a-button v-hasPermission="'dict:delete'" style="margin-left: 8px" @click="deleteClick">删除</a-button>
+                <a-dropdown v-hasPermission="'dict:export'">
                     <a-menu slot="overlay">
                         <a-menu-item key="export-data">导出Excel</a-menu-item>
                     </a-menu>
@@ -77,8 +77,9 @@
                     </a-popover>
                 </template>
                 <template slot="operation" slot-scope="text,record">
-                    <a-icon type="setting" theme="twoTone" twoToneColor="#4a9ff5"
+                    <a-icon v-hasPermission="'dict:update'"  type="setting" theme="twoTone" twoToneColor="#4a9ff5"
                             @click="updateClick(record)" title="修改字典"></a-icon>
+                    <a-badge v-hasNoPermission="'dict:update'" status="warning" text="无权限"></a-badge>
                 </template>
             </a-table>
         </div>

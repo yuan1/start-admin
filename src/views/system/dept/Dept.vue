@@ -29,9 +29,9 @@
         </div>
         <div>
             <div style="margin-bottom: 18px;">
-                <a-button type="primary" ghost @click="addClick">新增</a-button>
-                <a-button style="margin-left: 8px" @click="deleteClick"> 删除</a-button>
-                <a-dropdown>
+                <a-button v-hasPermission="'dept:add'" type="primary" ghost @click="addClick">新增</a-button>
+                <a-button v-hasPermission="'dept:delete'" style="margin-left: 8px" @click="deleteClick"> 删除</a-button>
+                <a-dropdown v-hasPermission="'dept:export'">
                     <a-menu slot="overlay">
                         <a-menu-item key="export-data">导出Excel</a-menu-item>
                     </a-menu>
@@ -50,8 +50,9 @@
                      :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}"
                      @change="handleTableChange" :scroll="{ x: 1500 }">
                 <template slot="operation" slot-scope="text, record">
-                    <a-icon type="setting" theme="twoTone" twoToneColor="#4a9ff5"
+                    <a-icon v-hasPermission="'dept:update'"  type="setting" theme="twoTone" twoToneColor="#4a9ff5"
                             @click="updateClick(record)" title="修改"></a-icon>
+                    <a-badge v-hasNoPermission="'dept:update'" status="warning" text="无权限"></a-badge>
                 </template>
             </a-table>
         </div>

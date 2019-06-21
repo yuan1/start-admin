@@ -48,9 +48,9 @@
         </div>
         <div>
             <div class="operator">
-                <a-button ghost type="primary" @click="addClick">新增</a-button>
-                <a-button  style="margin-left: 8px" @click="deleteClick">删除</a-button>
-                <a-dropdown>
+                <a-button v-hasPermission="'job:add'" ghost type="primary" @click="addClick">新增</a-button>
+                <a-button  v-hasPermission="'job:delete'" style="margin-left: 8px" @click="deleteClick">删除</a-button>
+                <a-dropdown  v-hasPermission="'job:export'">
                     <a-menu slot="overlay">
                         <a-menu-item key="export-data">导出Excel</a-menu-item>
                     </a-menu>
@@ -74,21 +74,21 @@
                     <a-tag v-else color="orange">暂停</a-tag>
                 </template>
                 <template slot="operations" slot-scope="text, record">
-                    <a-icon type="setting" theme="twoTone" twoToneColor="#4a9ff5"
+                    <a-icon v-hasPermission="'job:update'" type="setting" theme="twoTone" twoToneColor="#4a9ff5"
                             @click="updateClick(record)" title="修改"></a-icon>
                     &nbsp;
-                    <a-dropdown>
+                    <a-dropdown v-hasAnyPermission="`job:run,job:pause,job:resume`">
                         <a class="ant-dropdown-link">
                             <a-icon type="down-circle" style="font-size: 1.1rem"/>
                         </a>
                         <a-menu slot="overlay">
-                            <a-menu-item>
+                            <a-menu-item v-hasPermission="'job:run'">
                                 <a href="javascript:void(0)" @click="runJob(record)">立即执行</a>
                             </a-menu-item>
-                            <a-menu-item v-if="record.status === '0'">
+                            <a-menu-item v-hasPermission="'job:pause'" v-if="record.status === '0'">
                                 <a href="javascript:void(0)" @click="pauseJob(record)">暂停任务</a>
                             </a-menu-item>
-                            <a-menu-item v-if="record.status === '1'">
+                            <a-menu-item v-hasPermission="'job:resume'"  v-if="record.status === '1'">
                                 <a href="javascript:void(0)" @click="resumeJob(record)">恢复任务</a>
                             </a-menu-item>
                         </a-menu>
@@ -101,7 +101,7 @@
 </template>
 
 <script>
-    import JobEdit from "@/views/task/job/JobEdit";
+    import JobEdit from "@/views/quartz/job/JobEdit";
     export default {
         name: "Job",
         components: {JobEdit},

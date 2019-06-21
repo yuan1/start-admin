@@ -32,15 +32,15 @@
         </div>
         <div>
             <div style="margin-bottom: 18px;">
-                <a-button type="primary" ghost @click="addClick">新增</a-button>
-                <a-button style="margin-left: 8px" @click="deleteClick"> 删除</a-button>
+                <a-button type="primary" ghost v-hasPermission="'role:add'" @click="addClick">新增</a-button>
+                <a-button style="margin-left: 8px" v-hasPermission="'role:delete'" @click="deleteClick"> 删除</a-button>
                 <a-dropdown>
-                    <a-menu slot="overlay">
-                        <a-menu-item key="1">
+                    <a-menu slot="overlay" v-hasAnyPermission="`role:reset,role:export`">
+                        <a-menu-item v-hasPermission="'role:reset'"  key="password-reset">
                             <a-icon type="user"/>
                             密码重置
                         </a-menu-item>
-                        <a-menu-item key="2">
+                        <a-menu-item v-hasPermission="'role:export'"  key="export-data">
                             <a-icon type="user"/>
                             导出Excel
                         </a-menu-item>
@@ -60,8 +60,9 @@
                      :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}"
             >
                 <template slot="operation" slot-scope="text, record">
-                    <a-icon type="setting" theme="twoTone" twoToneColor="#4a9ff5" title="修改用户"
+                    <a-icon  v-hasPermission="'role:update'"  type="setting" theme="twoTone" twoToneColor="#4a9ff5" title="修改用户"
                             @click="updateClick(record)"></a-icon>
+                    <a-badge v-hasNoPermission="'menu:update'" status="warning" text="无权限"></a-badge>
                 </template>
             </a-table>
         </div>
