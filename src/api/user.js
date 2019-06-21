@@ -30,6 +30,9 @@ const user = {
     userProfile(data) {
         return axios.get(`${base.api}/user/${data.username}`)
     },
+    indexPage(data) {
+        return axios.get(`${base.api}/index/${data.username}`)
+    },
 
 };
 

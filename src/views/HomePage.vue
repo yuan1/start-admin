@@ -1,29 +1,45 @@
 <template>
     <div>
-        <div class="home">
-            <a-row type="flex" justify="space-around">
-                <a-col :span="4">
-                    <a-avatar :size="64" :src="avatar"/>
+        <a-row :gutter="8" class="head-info">
+            <a-card class="head-info-card" :bordered="false">
+                <a-col :span="12">
+                    <div class="head-info-avatar">
+                        <img alt="头像" :src="avatar">
+                    </div>
+                    <div class="head-info-count">
+                        <div class="head-info-welcome">
+                            {{welcomeMessage}}
+                        </div>
+                        <div class="head-info-desc">
+                            <p>{{user.deptName ? user.deptName : '暂无部门'}} | {{user.roleName ? user.roleName :
+                                '暂无角色'}}</p>
+                        </div>
+                        <div class="head-info-time">上次登录时间：{{user.lastLoginTime ? user.lastLoginTime : '第一次访问系统'}}</div>
+                    </div>
                 </a-col>
-                <a-col :span="12" :pull="4">
-                    <p>下午好，{{user.username}}，祝你开心每一天！</p>
-                    <p>交互设计师 | 蚂蚁金服－平台数据技术事业群－基础平台部－用户体验技术部－UED</p>
+                <a-col :span="12">
+                    <div>
+                        <a-row class="more-info">
+                            <a-col :span="4"></a-col>
+                            <a-col :span="4"></a-col>
+                            <a-col :span="4"></a-col>
+                            <a-col :span="4">
+                                <span>今日IP</span>
+                                <p><a>11</a></p>
+                            </a-col>
+                            <a-col :span="4">
+                                <span>今日访问</span>
+                                <p><a>11</a></p>
+                            </a-col>
+                            <a-col :span="4">
+                                <span>总访问量</span>
+                                <p><a>111</a></p>
+                            </a-col>
+                        </a-row>
+                    </div>
                 </a-col>
-                <a-col>
-                    <p>当前任务</p>
-                    <p style="text-align: center">56</p>
-                </a-col>
-                <a-col>
-                    <p>总任务</p>
-                    <p style="text-align: center">200</p>
-                </a-col>
-                <a-col>
-                    <p>总工作</p>
-                    <p style="text-align: center">23</p>
-                </a-col>
-            </a-row>
-
-        </div>
+            </a-card>
+        </a-row>
         <div class="content">
             <a-row :gutter="24">
                 <a-col :xl="16" :lg="24" :md="24" :sm="24" :xs="24">
@@ -238,10 +254,94 @@
                 return `static/avatar/${this.user.avatar}`
             },
         },
-        methods: {}
+        data() {
+            return {
+                welcomeMessage: ''
+            }
+        },
+        methods: {
+            welcome() {
+                const date = new Date();
+                const hour = date.getHours();
+                let time = hour < 6 ? '早上好' : (hour <= 11 ? '上午好' : (hour <= 13 ? '中午好' : (hour <= 18 ? '下午好' : '晚上好')))
+                let welcomeArr = [
+                    '喝杯咖啡休息下吧☕',
+                    '要不要和朋友打局LOL',
+                    '要不要和朋友打局王者荣耀',
+                    '几天没见又更好看了呢😍',
+                    '今天又写了几个Bug🐞呢',
+                    '今天在群里吹水了吗',
+                    '今天吃了什么好吃的呢',
+                    '今天您微笑了吗😊',
+                    '今天帮助别人解决问题了吗',
+                    '准备吃些什么呢',
+                    '周末要不要去看电影？'
+                ];
+                let index = Math.floor((Math.random() * welcomeArr.length));
+                return `${time}，${this.user.username}，${welcomeArr[index]}`
+            }
+        },
+        mounted() {
+            this.welcomeMessage = this.welcome();
+        }
     }
 </script>
 <style scoped>
+    .head-info {
+        /*margin-bottom: .5rem;*/
+    }
+
+    .head-info-card {
+        border-color: #f1f1f1;
+    }
+
+    .head-info-avatar {
+        display: inline-block;
+        float: left;
+        margin-right: 1rem;
+    }
+
+    .head-info-avatar img {
+        width: 5rem;
+        border-radius: 2px;
+    }
+    .head-info-count {
+        display: inline-block;
+        float: left;
+    }
+    .head-info .head-info-card .head-info-count .head-info-welcome {
+        font-size: 1.05rem;
+        margin-bottom: .1rem;
+    }
+
+    .head-info .head-info-card .head-info-count .head-info-desc,
+    .head-info .head-info-card .head-info-count .head-info-time{
+        color: rgba(0, 0, 0, 0.45);
+        font-size: .8rem;
+        padding: .2rem 0;
+    }
+
+    .head-info p {
+        margin-bottom: 0;
+    }
+
+    .more-info span {
+        color: rgba(0, 0, 0, .45);
+        display: inline-block;
+        font-size: .95rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .more-info p {
+        line-height: 32px;
+        margin-left: 10px;
+    }
+
+    .more-info p a {
+        font-weight: 600;
+        font-size: 1rem;
+    }
+
     .content {
         margin: 0;
     }
