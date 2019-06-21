@@ -107,7 +107,6 @@
                             this.loading = false;
                             // 更新其state
                             this.$api.user.userProfile(this.user).then((r) => {
-                                console.error('r.data',r.data);
                                 this.setUser(r.data);
                                 this.$message.success('修改成功');
                                 this.visible = false;
